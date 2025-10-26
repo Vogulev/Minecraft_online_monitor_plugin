@@ -1,8 +1,35 @@
 # Конфигурация OnlineMonitor плагина
 
 # Сообщение при входе игрока
-welcome-message: "&6Добро пожаловать на сервер, &e%player%&6!"
+# Доступные плейсхолдеры: %player%, %online%
+# Доступные цветовые коды: &0-&9, &a-&f (используйте & для цветов)
+# Примеры цветов: &a = зелёный, &e = жёлтый, &6 = золотой, &c = красный
+# Пример: "&6Добро пожаловать, &e%player%&6! Онлайн: &a%online%"
+welcome-message: "Добро пожаловать на сервер, %player%!"
 
 # Настройки логирования
 log-unique-joins: true
 log-join-quit: true
+
+# Настройки базы данных
+database:
+  # Тип базы данных: sqlite или mysql
+  type: sqlite
+
+  # Настройки для MySQL (игнорируются если type: sqlite)
+  mysql:
+    host: localhost
+    port: 3306
+    database: minecraft_stats
+    username: root
+    password: password
+
+# Настройки временной аналитики
+# Интервал записи снимков онлайна (в минутах)
+snapshot-interval-minutes: 5
+# Сколько дней хранить снимки (старые автоматически удаляются)
+snapshot-days-to-keep: 30
+
+# Часовой пояс для записи времени в БД
+# Формат: смещение в часах от UTC (для МСК = +3)
+timezone-offset: +3
