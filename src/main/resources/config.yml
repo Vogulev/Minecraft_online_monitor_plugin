@@ -1,0 +1,8 @@
+# Конфигурация OnlineMonitor плагина
+
+# Сообщение при входе игрока
+welcome-message: "&6Добро пожаловать на сервер, &e%player%&6!"
+
+# Настройки логирования
+log-unique-joins: true
+log-join-quit: true
