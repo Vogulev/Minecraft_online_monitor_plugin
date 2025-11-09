@@ -33,3 +33,27 @@ snapshot-days-to-keep: 30
 # Часовой пояс для записи времени в БД
 # Формат: смещение в часах от UTC (для МСК = +3)
 timezone-offset: +3
+
+# Discord интеграция
+discord:
+  # Включить Discord бота (true/false)
+  enabled: true
+
+  # Токен Discord бота (получить на https://discord.com/developers/applications)
+  bot-token: "YOUR_BOT_TOKEN_HERE"
+
+  # ID канала для уведомлений (ПКМ на канале -> Копировать ID)
+  channel-id: "YOUR_CHANNEL_ID_HERE"
+
+  # Настройки уведомлений
+  notifications:
+    # Уведомления о входе/выходе игроков
+    player-join: true
+    player-quit: true
+    # Уведомлять о новых игроках
+    new-player: true
+    # Уведомлять о новых рекордах онлайна
+    new-record: true
+    # Уведомления о запуске/остановке сервера
+    server-start: true
+    server-stop: true
