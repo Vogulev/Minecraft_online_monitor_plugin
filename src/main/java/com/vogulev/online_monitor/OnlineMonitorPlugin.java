@@ -25,7 +25,9 @@ public class OnlineMonitorPlugin extends JavaPlugin implements Listener
 {
     private static final Logger logger = Logger.getLogger("OnlineMonitor");
     private DatabaseManager database;
+    private DiscordBot discordBot;
     private final Map<String, Long> playerJoinTimes = new HashMap<>();
+    private int lastMaxOnline = 0;
 
     @Override
     public void onEnable()
@@ -34,15 +36,12 @@ public class OnlineMonitorPlugin extends JavaPlugin implements Listener
 
         saveDefaultConfig();
 
-        // Инициализация базы данных
         database = new DatabaseManager(getDataFolder());
-        database.setPlugin(this); // Устанавливаем ссылку на плагин для async операций
+        database.setPlugin(this);
         try {
-            // Устанавливаем часовой пояс из конфигурации
             String timezoneOffset = getConfig().getString("timezone-offset", "+3");
             database.setTimezoneOffset(timezoneOffset);
 
-            // Подключение к БД
             String dbType = getConfig().getString("database.type", "sqlite");
             String host = getConfig().getString("database.mysql.host", "localhost");
             int port = getConfig().getInt("database.mysql.port", 3306);
@@ -60,27 +59,67 @@ public class OnlineMonitorPlugin extends JavaPlugin implements Listener
         }
 
         updateMaxOnline();
+        lastMaxOnline = database.getMaxOnline();
 
-        // Периодическая задача для записи снимков онлайна (каждые 5 минут)
         long snapshotInterval = getConfig().getLong("snapshot-interval-minutes", 5) * 60 * 20; // В тиках
         getServer().getScheduler().runTaskTimer(this, () -> {
             int currentOnline = getServer().getOnlinePlayers().size();
             database.recordOnlineSnapshot(currentOnline);
         }, snapshotInterval, snapshotInterval);
 
-        // Очистка старых снимков (каждый день)
         int daysToKeep = getConfig().getInt("snapshot-days-to-keep", 30);
-        getServer().getScheduler().runTaskTimer(this, () -> {
-            database.cleanOldSnapshots(daysToKeep);
-        }, 24000L, 24000L); // Каждые 20 минут (1 игровой день)
+        getServer().getScheduler().runTaskTimer(this,
+                () -> database.cleanOldSnapshots(daysToKeep), 24000L, 24000L);
 
         logger.info("Online snapshots will be recorded every " + (snapshotInterval / 1200) + " minutes");
+
+        boolean discordEnabled = getConfig().getBoolean("discord.enabled", false);
+        logger.info("Discord интеграция enabled=" + discordEnabled);
+
+        if (discordEnabled) {
+            String botToken = getConfig().getString("discord.bot-token");
+            String channelId = getConfig().getString("discord.channel-id");
+
+            logger.info("Discord bot-token длина: " + (botToken != null ? botToken.length() : "null"));
+            logger.info("Discord channel-id: " + (channelId != null ? channelId : "null"));
+
+            if (botToken != null && !botToken.equals("YOUR_BOT_TOKEN_HERE") &&
+                channelId != null && !channelId.equals("YOUR_CHANNEL_ID_HERE")) {
+
+                logger.info("Запуск Discord бота...");
+                discordBot = new DiscordBot(this);
+                discordBot.start(botToken, channelId);
+
+                if (getConfig().getBoolean("discord.notifications.server-start", true)) {
+                    getServer().getScheduler().runTaskLater(this,
+                            () -> discordBot.sendServerStartNotification(), 40L);
+                }
+            } else {
+                logger.warning("Discord bot не запущен: проверьте настройки bot-token и channel-id в config.yml");
+                if (botToken == null || botToken.equals("YOUR_BOT_TOKEN_HERE")) {
+                    logger.warning("  - bot-token не настроен!");
+                }
+                if (channelId == null || channelId.equals("YOUR_CHANNEL_ID_HERE")) {
+                    logger.warning("  - channel-id не настроен!");
+                }
+            }
+        } else {
+            logger.info("Discord бот отключен в конфигурации (discord.enabled=false)");
+        }
     }
 
     @Override
     public void onDisable()
     {
-        // Закрываем активные сессии при остановке сервера
+        if (discordBot != null && getConfig().getBoolean("discord.notifications.server-stop", true)) {
+            discordBot.sendServerStopNotification();
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
         for (Map.Entry<String, Long> entry : playerJoinTimes.entrySet()) {
             long sessionDuration = System.currentTimeMillis() - entry.getValue();
             database.recordPlayerQuit(entry.getKey(), sessionDuration);
@@ -89,6 +128,10 @@ public class OnlineMonitorPlugin extends JavaPlugin implements Listener
 
         if (database != null) {
             database.disconnect();
+        }
+
+        if (discordBot != null) {
+            discordBot.shutdown();
         }
 
         logger.info("OnlineMonitor plugin disabled!");
@@ -126,6 +169,20 @@ public class OnlineMonitorPlugin extends JavaPlugin implements Listener
 
         player.sendMessage(welcomeMessage);
 
+        // Discord уведомление о входе игрока
+        if (discordBot != null) {
+            boolean notifyJoin = getConfig().getBoolean("discord.notifications.player-join", true);
+            boolean notifyNewPlayer = getConfig().getBoolean("discord.notifications.new-player", true);
+
+            if ((notifyJoin && !isFirstTime) || (notifyNewPlayer && isFirstTime)) {
+                int currentOnline = getServer().getOnlinePlayers().size();
+                discordBot.sendPlayerJoinNotification(playerName, currentOnline, isFirstTime);
+            }
+        }
+
+        // Проверка нового рекорда онлайна
+        checkNewRecord();
+
         logger.info(player.getName() + " joined. Online: " + getServer().getOnlinePlayers().size());
     }
 
@@ -143,6 +200,12 @@ public class OnlineMonitorPlugin extends JavaPlugin implements Listener
             database.recordPlayerQuit(playerName, sessionTime);
 
             getLogger().info(playerName + " провел в игре: " + minutes + " минут");
+
+            // Discord уведомление о выходе игрока
+            if (discordBot != null && getConfig().getBoolean("discord.notifications.player-quit", true)) {
+                int currentOnline = getServer().getOnlinePlayers().size() - 1;
+                discordBot.sendPlayerQuitNotification(playerName, currentOnline, minutes);
+            }
 
             playerJoinTimes.remove(playerName);
         }
@@ -397,7 +460,6 @@ public class OnlineMonitorPlugin extends JavaPlugin implements Listener
         int filledLength = (int) ((value / maxValue) * barLength);
         double percentage = (value / maxValue) * 100;
 
-        // Цвет зависит от заполненности: красный->желтый->зеленый
         String barColor;
         if (percentage >= 75) {
             barColor = "&a"; // Зеленый - высокая активность
@@ -432,5 +494,28 @@ public class OnlineMonitorPlugin extends JavaPlugin implements Listener
      */
     private void sendColoredMessage(CommandSender sender, String message) {
         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+    }
+
+    /**
+     * Проверяет и уведомляет о новом рекорде онлайна
+     */
+    private void checkNewRecord() {
+        int currentMaxOnline = database.getMaxOnline();
+        if (currentMaxOnline > lastMaxOnline) {
+            lastMaxOnline = currentMaxOnline;
+
+            if (discordBot != null && getConfig().getBoolean("discord.notifications.new-record", true)) {
+                discordBot.sendNewRecordNotification(currentMaxOnline);
+            }
+
+            logger.info("Новый рекорд онлайна: " + currentMaxOnline + " игроков!");
+        }
+    }
+
+    /**
+     * Получить DatabaseManager (для Discord бота)
+     */
+    public DatabaseManager getDatabase() {
+        return database;
     }
 }
