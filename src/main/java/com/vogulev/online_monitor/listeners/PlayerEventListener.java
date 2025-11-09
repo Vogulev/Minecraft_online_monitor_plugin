@@ -1,0 +1,114 @@
+package com.vogulev.online_monitor.listeners;
+
+import com.vogulev.online_monitor.DatabaseManager;
+import com.vogulev.online_monitor.DiscordBot;
+import org.bukkit.ChatColor;
+import org.bukkit.Server;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+
+import java.util.Map;
+import java.util.logging.Logger;
+
+/**
+ * Обработчик событий входа и выхода игроков
+ */
+public class PlayerEventListener implements Listener {
+    private static final Logger logger = Logger.getLogger("OnlineMonitor");
+    private final DatabaseManager database;
+    private final DiscordBot discordBot;
+    private final Server server;
+    private final FileConfiguration config;
+    private final Map<String, Long> playerJoinTimes;
+    private final Runnable onNewRecordCallback;
+
+    public PlayerEventListener(DatabaseManager database, DiscordBot discordBot, Server server,
+                                FileConfiguration config, Map<String, Long> playerJoinTimes,
+                                Runnable onNewRecordCallback) {
+        this.database = database;
+        this.discordBot = discordBot;
+        this.server = server;
+        this.config = config;
+        this.playerJoinTimes = playerJoinTimes;
+        this.onNewRecordCallback = onNewRecordCallback;
+    }
+
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        String playerName = player.getName();
+
+        updateMaxOnline();
+
+        boolean isFirstTime = !player.hasPlayedBefore();
+        if (isFirstTime) {
+            database.incrementUniquePlayer();
+            logger.info("Новый игрок присоединился: " + player.getName());
+        }
+
+        database.recordPlayerJoin(playerName);
+
+        playerJoinTimes.put(playerName, System.currentTimeMillis());
+
+        String welcomeMessage = config.getString("welcome-message",
+                "Добро пожаловать на сервер, %player%! Онлайн: %online%");
+
+        welcomeMessage = welcomeMessage
+                .replace("%player%", playerName)
+                .replace("%online%", String.valueOf(server.getOnlinePlayers().size()));
+
+        welcomeMessage = ChatColor.translateAlternateColorCodes('&', welcomeMessage);
+
+        player.sendMessage(welcomeMessage);
+
+        if (discordBot != null) {
+            boolean notifyJoin = config.getBoolean("discord.notifications.player-join", true);
+            boolean notifyNewPlayer = config.getBoolean("discord.notifications.new-player", true);
+
+            if ((notifyJoin && !isFirstTime) || (notifyNewPlayer && isFirstTime)) {
+                int currentOnline = server.getOnlinePlayers().size();
+                discordBot.sendPlayerJoinNotification(playerName, currentOnline, isFirstTime);
+            }
+        }
+
+        if (onNewRecordCallback != null) {
+            onNewRecordCallback.run();
+        }
+
+        logger.info(player.getName() + " joined. Online: " + server.getOnlinePlayers().size());
+    }
+
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        Player player = event.getPlayer();
+        String playerName = player.getName();
+
+        Long joinTime = playerJoinTimes.get(playerName);
+        if (joinTime != null) {
+            long sessionTime = System.currentTimeMillis() - joinTime;
+            long minutes = sessionTime / (1000 * 60);
+
+            database.recordPlayerQuit(playerName, sessionTime);
+
+            logger.info(playerName + " провел в игре: " + minutes + " минут");
+
+            if (discordBot != null && config.getBoolean("discord.notifications.player-quit", true)) {
+                int currentOnline = server.getOnlinePlayers().size() - 1;
+                discordBot.sendPlayerQuitNotification(playerName, currentOnline, minutes);
+            }
+
+            playerJoinTimes.remove(playerName);
+        }
+
+        logger.info(player.getName() + " вышел. Онлайн: " + (server.getOnlinePlayers().size() - 1));
+    }
+
+    private void updateMaxOnline() {
+        int currentOnline = server.getOnlinePlayers().size();
+        database.updateMaxOnline(currentOnline);
+    }
+}

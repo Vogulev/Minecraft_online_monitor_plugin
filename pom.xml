@@ -5,7 +5,7 @@
 
     <groupId>com.vogulev</groupId>
     <artifactId>online_monitor</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.1.0-SNAPSHOT</version>
     <name>online_monitor</name>
     <description>online_monitor</description>
     <url/>
