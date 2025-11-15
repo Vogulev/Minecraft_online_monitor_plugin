@@ -4,6 +4,7 @@ import com.vogulev.online_monitor.commands.StatsCommandExecutor;
 import com.vogulev.online_monitor.listeners.PlayerEventListener;
 import com.vogulev.online_monitor.tasks.CleanupTask;
 import com.vogulev.online_monitor.tasks.SnapshotTask;
+import com.vogulev.online_monitor.web.WebServer;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
@@ -18,6 +19,7 @@ public class OnlineMonitorPlugin extends JavaPlugin {
     private static final Logger logger = Logger.getLogger("OnlineMonitor");
     private DatabaseManager database;
     private DiscordBot discordBot;
+    private WebServer webServer;
     private final Map<String, Long> playerJoinTimes = new HashMap<>();
     private int lastMaxOnline = 0;
 
@@ -57,11 +59,14 @@ public class OnlineMonitorPlugin extends JavaPlugin {
 
         initializeDiscord();
 
+        initializeWebServer();
+
         logger.info("OnlineMonitor plugin enabled with database!");
     }
 
     @Override
     public void onDisable() {
+        // Сначала отправляем уведомление об остановке сервера
         if (discordBot != null && getConfig().getBoolean("discord.notifications.server-stop", true)) {
             discordBot.sendServerStopNotification();
             try {
@@ -77,12 +82,24 @@ public class OnlineMonitorPlugin extends JavaPlugin {
         }
         playerJoinTimes.clear();
 
-        if (database != null) {
-            database.disconnect();
+        if (webServer != null) {
+            logger.info("Stopping web server...");
+            webServer.stop();
         }
 
         if (discordBot != null) {
+            logger.info("Shutting down Discord bot...");
             discordBot.shutdown();
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        if (database != null) {
+            logger.info("Closing database connection...");
+            database.disconnect();
         }
 
         logger.info("OnlineMonitor plugin disabled!");
@@ -145,9 +162,8 @@ public class OnlineMonitorPlugin extends JavaPlugin {
             discordBot.start(botToken, channelId);
 
             if (getConfig().getBoolean("discord.notifications.server-start", true)) {
-                getServer().getScheduler().runTaskLater(this, () -> {
-                    discordBot.sendServerStartNotification();
-                }, 40L); // 2 секунды после запуска
+                getServer().getScheduler().runTaskLater(this,
+                        () -> discordBot.sendServerStartNotification(), 40L);
             }
         } else {
             logger.warning("Discord bot не запущен: проверьте настройки bot-token и channel-id в config.yml");
@@ -157,6 +173,26 @@ public class OnlineMonitorPlugin extends JavaPlugin {
             if (channelId == null || channelId.equals("YOUR_CHANNEL_ID_HERE")) {
                 logger.warning("  - channel-id не настроен!");
             }
+        }
+    }
+
+    private void initializeWebServer() {
+        boolean webEnabled = getConfig().getBoolean("web-panel.enabled", false);
+        logger.info("Web panel enabled = " + webEnabled);
+
+        if (!webEnabled) {
+            logger.info("Web panel отключена в конфигурации (web-panel.enabled = false)");
+            return;
+        }
+
+        int port = getConfig().getInt("web-panel.port", 8080);
+
+        try {
+            webServer = new WebServer(this, database, port);
+            webServer.start();
+        } catch (Exception e) {
+            logger.severe("Не удалось запустить web panel: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
