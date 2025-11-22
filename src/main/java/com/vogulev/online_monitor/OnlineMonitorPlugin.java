@@ -66,42 +66,26 @@ public class OnlineMonitorPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Сначала отправляем уведомление об остановке сервера
         if (discordBot != null && getConfig().getBoolean("discord.notifications.server-stop", true)) {
             discordBot.sendServerStopNotification();
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
         }
-
         for (Map.Entry<String, Long> entry : playerJoinTimes.entrySet()) {
             long sessionDuration = System.currentTimeMillis() - entry.getValue();
             database.recordPlayerQuit(entry.getKey(), sessionDuration);
         }
         playerJoinTimes.clear();
-
         if (webServer != null) {
             logger.info("Stopping web server...");
             webServer.stop();
         }
-
         if (discordBot != null) {
             logger.info("Shutting down Discord bot...");
             discordBot.shutdown();
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
         }
-
         if (database != null) {
             logger.info("Closing database connection...");
             database.disconnect();
         }
-
         logger.info("OnlineMonitor plugin disabled!");
     }
 

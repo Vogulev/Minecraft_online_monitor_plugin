@@ -461,7 +461,7 @@ curl http://localhost:8080/api/snapshots?type=hourly&days=14
 
 ```bash
 # Клонируйте репозиторий
-git clone <repository-url>
+git clone https://github.com/Vogulev/Minecraft_online_monitor_plugin.git
 cd online_monitor
 
 # Соберите с помощью Maven

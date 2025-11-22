@@ -73,8 +73,19 @@ public class DiscordBot extends ListenerAdapter {
 
     public void shutdown() {
         if (jda != null) {
-            jda.shutdown();
-            logger.info("Discord bot остановлен");
+            try
+            {
+                jda.shutdown();
+                if (!jda.awaitShutdown(5, java.util.concurrent.TimeUnit.SECONDS))
+                {
+                    jda.shutdownNow();
+                    jda.awaitShutdown();
+                }
+                logger.info("Discord bot остановлен");
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                jda.shutdownNow();
+            }
         }
     }
 
@@ -279,6 +290,11 @@ public class DiscordBot extends ListenerAdapter {
                 .setDescription("Minecraft сервер был остановлен")
                 .setTimestamp(java.time.Instant.now());
 
-        channel.sendMessageEmbeds(embed.build()).queue();
+        try {
+            channel.sendMessageEmbeds(embed.build()).complete();
+        } catch (Exception e) {
+            logger.warning("Не удалось отправить уведомление об остановке сервера: " + e.getMessage());
+        }
+
     }
 }

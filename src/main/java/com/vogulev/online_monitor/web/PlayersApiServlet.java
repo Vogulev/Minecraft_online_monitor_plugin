@@ -11,6 +11,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.apache.commons.lang3.math.NumberUtils.isParsable;
+
+
 /**
  * API endpoint для получения информации об игроках
  * GET /api/players - топ игроков
@@ -42,7 +45,7 @@ public class PlayersApiServlet extends HttpServlet {
                 resp.getWriter().write(gson.toJson(playerStats));
             } else {
                 String limitParam = req.getParameter("limit");
-                int limit = limitParam != null ? Integer.parseInt(limitParam) : 10;
+                int limit = isParsable(limitParam) ? Integer.parseInt(limitParam) : 10;
                 Map<String, Integer> topPlayers = database.getTopPlayersByJoins(limit);
                 resp.getWriter().write(gson.toJson(topPlayers));
             }
