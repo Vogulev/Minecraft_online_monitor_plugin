@@ -2,93 +2,93 @@
 
 ## [0.3.0]
 
-### Добавлено
-- Веб-панель на базе Embedded Jetty для просмотра статистики через браузер
-- REST API endpoints для интеграции со сторонними сервисами:
-  - `/api/stats` - общая статистика сервера
-  - `/api/online` - текущий онлайн и список игроков
-  - `/api/players` - топ игроков и статистика конкретных игроков
-  - `/api/snapshots` - исторические данные (почасовые, дневные, недельные)
-- Интерактивный dashboard с графиками:
-  - Почасовая статистика онлайна за 7 дней (Chart.js)
-  - Средний онлайн по дням за 30 дней
-  - Топ-10 игроков по заходам
-  - Карточки со статистикой в реальном времени
-- Автоматическое обновление данных на веб-панели каждые 30 секунд
-- Адаптивный дизайн для мобильных устройств
-- Настройки веб-панели в config.yml (включение/выключение, порт)
+### Added
+- Web dashboard based on Embedded Jetty for viewing statistics through browser
+- REST API endpoints for third-party service integration:
+  - `/api/stats` - general server statistics
+  - `/api/online` - current online and player list
+  - `/api/players` - top players and specific player statistics
+  - `/api/snapshots` - historical data (hourly, daily, weekly)
+- Interactive dashboard with charts:
+  - 📈 Hourly online statistics for the last 7 days (Chart.js)
+  - 📊 Average online by day for the last 30 days
+  - Top 10 players by join count
+  - Real-time statistics cards
+- Automatic data refresh on web dashboard every 30 seconds
+- Responsive design for mobile devices
+- Web dashboard settings in config.yml (enable/disable, port)
 
-### Изменено
-- Обновлена версия Paper API до 1.20.4 для совместимости с Java 17
-- Обновлена документация с подробным описанием веб-панели и API
+### Changed
+- Updated Paper API version to 1.20.4 for Java 17 compatibility
+- Updated documentation with detailed web dashboard and API description
 
-### Зависимости
-- Добавлен Eclipse Jetty 11.0.18 (веб-сервер)
-- Добавлен Gson 2.10.1 (JSON сериализация)
-- Добавлен Chart.js 4.4.0 (визуализация графиков)
+### Dependencies
+- Added Eclipse Jetty 11.0.18 (web server)
+- Added Gson 2.10.1 (JSON serialization)
+- Added Chart.js 4.4.0 (chart visualization)
 
 ---
 
 ## [1.1.0]
 
-### Добавлено
-- Discord интеграция с полной поддержкой slash-команд
-- Уведомления в Discord о входе/выходе игроков
-- Уведомления о новых игроках
-- Уведомления о новых рекордах онлайна
-- Уведомления о запуске/остановке сервера
-- Slash-команды Discord:
-  - `/online` - показать текущий онлайн
-  - `/stats` - показать детальную статистику
-  - `/top` - показать топ игроков
-  - `/player <nickname>` - показать статистику игрока
-- Красивые embed-сообщения с эмодзи
+### Added
+- Discord integration with full slash command support
+- Discord notifications for player join/leave events
+- New player notifications
+- New online record notifications
+- Server start/stop notifications
+- Discord slash commands:
+  - `/online` - show current online
+  - `/stats` - show detailed statistics
+  - `/top` - show top players
+  - `/player <nickname>` - show player statistics
+- Beautiful embed messages with emojis
 
-### Изменено
-- Рефакторинг кода для улучшения читаемости
-- Оптимизация запросов к базе данных
+### Changed
+- Code refactoring for improved readability
+- Database query optimization
 
 ---
 
 ## [1.0.0]
 
-### Добавлено
-- Начальный релиз плагина OnlineMonitor
-- Отслеживание онлайна в реальном времени
-- Ведение статистики игроков (входы, время в игре)
-- Запись исторических данных онлайна (снимки каждые 5 минут)
-- Поддержка SQLite и MySQL баз данных
-- Детальная аналитика по часам, дням и дням недели
-- Топ игроков по активности
-- Персональная статистика каждого игрока
-- Команды в игре:
-  - `/online` - базовая статистика
-  - `/online stats` - детальная статистика
-  - `/online top` - топ игроков
-  - `/online player <ник>` - статистика игрока
-  - `/online hourly [дни]` - средний онлайн по часам
-  - `/online daily [дни]` - средний онлайн по дням
-  - `/online weekday [недели]` - средний онлайн по дням недели
-  - `/online peak [дни]` - пиковые часы активности
-- Настраиваемые сообщения при входе игроков
-- Автоматическая очистка старых снапшотов
-- Поддержка часовых поясов
-- Пул соединений HikariCP для производительности
+### Added
+- Initial release of OnlineMonitor plugin
+- Real-time online tracking
+- Player statistics tracking (logins, playtime)
+- Historical online data recording (snapshots every 5 minutes)
+- SQLite and MySQL database support
+- Detailed analytics by hours, days, and weekdays
+- Top players by activity
+- Personal statistics for each player
+- In-game commands:
+  - `/online` - basic statistics
+  - `/online stats` - detailed statistics
+  - `/online top` - top players
+  - `/online player <name>` - player statistics
+  - `/online hourly [days]` - average online by hour
+  - `/online daily [days]` - average online by day
+  - `/online weekday [weeks]` - average online by weekday
+  - `/online peak [days]` - peak activity hours
+- Customizable player join messages
+- Automatic old snapshot cleanup
+- Timezone support
+- HikariCP connection pool for performance
 
 ---
 
-## Типы изменений
+## Change Types
 
-- **Добавлено** - для новой функциональности
-- **Изменено** - для изменений в существующей функциональности
-- **Устарело** - для функциональности, которая скоро будет удалена
-- **Удалено** - для удалённой функциональности
-- **Исправлено** - для любых исправлений ошибок
-- **Безопасность** - для обновлений безопасности
+- **Added** - for new features
+- **Changed** - for changes in existing functionality
+- **Deprecated** - for features that will be removed soon
+- **Removed** - for removed features
+- **Fixed** - for bug fixes
+- **Security** - for security updates
 
 ---
 
-## Ссылки
+## Links
 
 - [Unreleased]: https://github.com/username/online_monitor/compare/v1.1.0...HEAD
 - [0.2.0]: https://github.com/username/online_monitor/compare/v1.0.0...v1.1.0

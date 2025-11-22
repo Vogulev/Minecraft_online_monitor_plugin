@@ -1,131 +1,131 @@
-# OnlineMonitor - Плагин для мониторинга онлайна Minecraft сервера
+# OnlineMonitor - Minecraft Server Online Monitoring Plugin
 
-Мощный плагин для отслеживания статистики игроков на вашем Minecraft сервере с полной интеграцией Discord!
+A powerful plugin for tracking player statistics on your Minecraft server with full Discord integration!
 
-## Возможности
+## Features
 
-### Основные функции:
-- Отслеживание онлайна в реальном времени
-- Ведение статистики игроков (входы, время в игре)
-- Запись исторических данных онлайна (снимки каждые 5 минут)
-- Поддержка SQLite и MySQL баз данных
-- Детальная аналитика по часам, дням и дням недели
-- Топ игроков по активности
-- Персональная статистика каждого игрока
+### Core Functions:
+- Real-time online tracking
+- Player statistics (logins, playtime)
+- Historical online data recording (snapshots every 5 minutes)
+- SQLite and MySQL database support
+- Detailed analytics by hours, days, and weekdays
+- Top players by activity
+- Personal statistics for each player
 
-### Discord интеграция:
-- Уведомления о входе/выходе игроков
-- Уведомления о новых игроках
-- Уведомления о новых рекордах онлайна
-- Уведомления о запуске/остановке сервера
-- Slash-команды для просмотра статистики прямо в Discord
-- Красивые embed-сообщения с эмодзи
+### Discord Integration:
+- Player join/leave notifications
+- New player announcements
+- New online record alerts
+- Server start/stop notifications
+- Slash commands to view statistics directly in Discord
+- Beautiful embed messages with emojis
 
-### Веб-панель:
-- 📊 Интерактивная веб-панель с графиками
-- 📈 Визуализация статистики в реальном времени
-- 🎨 Современный адаптивный дизайн
-- 📉 Графики онлайна по часам и дням (Chart.js)
-- 🔄 Автоматическое обновление данных каждые 30 секунд
-- 🌐 REST API для интеграции со сторонними сервисами
-- 📱 Адаптивный интерфейс для мобильных устройств
+### Web Dashboard:
+- 📊 Interactive web panel with charts
+- 📈 Real-time statistics visualization
+- 🎨 Modern responsive design
+- 📉 Online charts by hours and days (Chart.js)
+- 🔄 Automatic data refresh every 30 seconds
+- 🌐 REST API for third-party service integration
+- 📱 Responsive interface for mobile devices
 
 ---
 
-## Требования
+## Requirements
 
 - **Minecraft**: 1.21.8 (Paper/Spigot)
-- **Java**: 17 или выше
-- **Discord бот** (для Discord интеграции)
+- **Java**: 17 or higher
+- **Discord bot** (for Discord integration)
 
 ---
 
-## Установка
+## Installation
 
-### Шаг 1: Скачайте плагин
+### Step 1: Download the Plugin
 
-1. Скачайте `online_monitor-X.X.X.jar` из раздела Releases
-2. Поместите файл в папку `plugins/` вашего сервера
+1. Download `online_monitor-X.X.X.jar` from the Releases section
+2. Place the file in your server's `plugins/` folder
 
-### Шаг 2: Первый запуск
+### Step 2: First Launch
 
-1. Запустите сервер
-2. Плагин создаст конфигурационный файл `plugins/OnlineMonitor/config.yml`
-3. Остановите сервер для настройки
+1. Start the server
+2. The plugin will create a configuration file `plugins/OnlineMonitor/config.yml`
+3. Stop the server for configuration
 
 ---
 
-## Настройка Discord бота
+## Discord Bot Setup
 
-Для использования Discord интеграции выполните следующие шаги:
+To use Discord integration, follow these steps:
 
-### 1. Создание Discord приложения
+### 1. Create Discord Application
 
-1. Перейдите на [Discord Developer Portal](https://discord.com/developers/applications)
-2. Нажмите **"New Application"**
-3. Введите название (например, "Minecraft Monitor")
-4. Нажмите **"Create"**
+1. Go to [Discord Developer Portal](https://discord.com/developers/applications)
+2. Click **"New Application"**
+3. Enter a name (e.g., "Minecraft Monitor")
+4. Click **"Create"**
 
-### 2. Создание бота и получение токена
+### 2. Create Bot and Get Token
 
-1. В левом меню выберите **"Bot"**
-2. Нажмите **"Add Bot"** → **"Yes, do it!"**
-3. Прокрутите до раздела **"Privileged Gateway Intents"**
-4. Включите все три переключателя:
+1. In the left menu, select **"Bot"**
+2. Click **"Add Bot"** → **"Yes, do it!"**
+3. Scroll to **"Privileged Gateway Intents"** section
+4. Enable all three toggles:
    - ✅ **PRESENCE INTENT**
    - ✅ **SERVER MEMBERS INTENT**
-   - ✅ **MESSAGE CONTENT INTENT** ← **ОБЯЗАТЕЛЬНО!**
-5. Нажмите **"Save Changes"**
-6. Прокрутите вверх и нажмите **"Reset Token"** → **"Copy"**
-7. Сохраните токен (он понадобится для config.yml)
+   - ✅ **MESSAGE CONTENT INTENT** ← **REQUIRED!**
+5. Click **"Save Changes"**
+6. Scroll up and click **"Reset Token"** → **"Copy"**
+7. Save the token (you'll need it for config.yml)
 
-### 3. Приглашение бота на сервер
+### 3. Invite Bot to Server
 
-1. В левом меню выберите **"OAuth2"** → **"URL Generator"**
-2. В разделе **SCOPES** выберите:
+1. In the left menu, select **"OAuth2"** → **"URL Generator"**
+2. In **SCOPES** section, select:
    - `bot`
    - `applications.commands`
-3. В разделе **BOT PERMISSIONS** выберите:
+3. In **BOT PERMISSIONS** section, select:
    - `Send Messages`
    - `Embed Links`
    - `Read Message History`
    - `Use Slash Commands`
-4. Скопируйте сгенерированную URL внизу страницы
-5. Откройте URL в браузере и добавьте бота на ваш Discord сервер
+4. Copy the generated URL at the bottom of the page
+5. Open the URL in your browser and add the bot to your Discord server
 
-### 4. Получение ID канала
+### 4. Get Channel ID
 
-1. В Discord откройте **Настройки пользователя** → **Расширенные** → включите **"Режим разработчика"**
-2. Вернитесь на ваш сервер Discord
-3. Нажмите **правой кнопкой мыши** на канал, куда хотите получать уведомления
-4. Выберите **"Копировать идентификатор канала"**
-5. Сохраните ID канала
+1. In Discord, open **User Settings** → **Advanced** → enable **"Developer Mode"**
+2. Return to your Discord server
+3. **Right-click** on the channel where you want to receive notifications
+4. Select **"Copy Channel ID"**
+5. Save the channel ID
 
 ---
 
-## Настройка конфигурации
+## Configuration Setup
 
-Откройте файл `plugins/OnlineMonitor/config.yml` и настройте параметры:
+Open the `plugins/OnlineMonitor/config.yml` file and configure the parameters:
 
-### Базовые настройки
+### Basic Settings
 
 ```yaml
-# Сообщение при входе игрока
-welcome-message: "Добро пожаловать на сервер, %player%!"
+# Player join message
+welcome-message: "Welcome to the server, %player%!"
 
-# Настройки логирования
+# Logging settings
 log-unique-joins: true
 log-join-quit: true
 ```
 
-### Настройки базы данных
+### Database Settings
 
 ```yaml
 database:
-  # Тип базы данных: sqlite или mysql
+  # Database type: sqlite or mysql
   type: sqlite
 
-  # Настройки MySQL (если используете MySQL)
+  # MySQL settings (if using MySQL)
   mysql:
     host: localhost
     port: 3306
@@ -134,121 +134,121 @@ database:
     password: password
 ```
 
-### Настройки аналитики
+### Analytics Settings
 
 ```yaml
-# Интервал записи снимков онлайна (в минутах)
+# Online snapshot recording interval (in minutes)
 snapshot-interval-minutes: 5
 
-# Сколько дней хранить снимки
+# How many days to keep snapshots
 snapshot-days-to-keep: 30
 
-# Часовой пояс (смещение от UTC)
+# Timezone (offset from UTC)
 timezone-offset: +3
 ```
 
-### Настройки Discord
+### Discord Settings
 
 ```yaml
 discord:
-  # Включить Discord интеграцию
+  # Enable Discord integration
   enabled: true
 
-  # Токен бота (из шага 2)
-  bot-token: "ВАШ_ТОКЕН_ЗДЕСЬ"
+  # Bot token (from step 2)
+  bot-token: "YOUR_TOKEN_HERE"
 
-  # ID канала для уведомлений (из шага 4)
-  channel-id: "ID_КАНАЛА_ЗДЕСЬ"
+  # Channel ID for notifications (from step 4)
+  channel-id: "YOUR_CHANNEL_ID_HERE"
 
-  # Настройки уведомлений
+  # Notification settings
   notifications:
-    player-join: true        # Уведомления о входе игроков
-    player-quit: true        # Уведомления о выходе игроков
-    new-player: true         # Уведомления о новых игроках
-    new-record: true         # Уведомления о новых рекордах
-    server-start: true       # Уведомление о запуске сервера
-    server-stop: true        # Уведомление об остановке сервера
+    player-join: true        # Player join notifications
+    player-quit: true        # Player quit notifications
+    new-player: true         # New player notifications
+    new-record: true         # New record notifications
+    server-start: true       # Server start notification
+    server-stop: true        # Server stop notification
 ```
 
-### Настройки веб-панели
+### Web Dashboard Settings
 
 ```yaml
 web-panel:
-  # Включить веб-панель
+  # Enable web dashboard
   enabled: true
 
-  # Порт для веб-панели (убедитесь, что порт свободен)
+  # Port for web dashboard (make sure the port is available)
   port: 8080
 ```
 
-После включения веб-панели она будет доступна по адресу:
-- **Локально**: http://localhost:8080
-- **Сеть**: http://ВАШ_IP:8080
+After enabling the web dashboard, it will be accessible at:
+- **Locally**: http://localhost:8080
+- **Network**: http://YOUR_IP:8080
 
-**Важно**: Если вы хотите открыть веб-панель для внешнего доступа, настройте:
-1. Проброс порта на роутере (Port Forwarding)
-2. Правила файрвола
-3. **Рекомендуется**: Используйте reverse proxy (nginx/Apache) с SSL/TLS для безопасности
+**Important**: If you want to open the web dashboard for external access, configure:
+1. Port forwarding on your router
+2. Firewall rules
+3. **Recommended**: Use a reverse proxy (nginx/Apache) with SSL/TLS for security
 
 ---
 
-## Веб-панель
+## Web Dashboard
 
-После запуска сервера с включенной веб-панелью, откройте браузер и перейдите по адресу `http://адрес_вашего_сервера:8080`
+After starting the server with the web dashboard enabled, open your browser and go to `http://your_server_address:8080`
 
-### Возможности веб-панели:
+### Web Dashboard Features:
 
-#### 📊 Главная страница (Dashboard)
-- **Статистика в реальном времени**:
-  - Рекорд онлайна
-  - Количество уникальных игроков
-  - Всего сессий
-  - Активные сессии
-  - Общее время игры
+#### 📊 Main Dashboard
+- **Real-time statistics**:
+  - Online record
+  - Unique players count
+  - Total sessions
+  - Active sessions
+  - Total playtime
 
-- **Интерактивные графики**:
-  - 📈 Почасовая статистика онлайна за последние 7 дней
-  - 📊 Средний онлайн по дням за последние 30 дней
+- **Interactive charts**:
+  - 📈 Hourly online statistics for the last 7 days
+  - 📊 Average online by day for the last 30 days
 
-- **Топ игроков**:
-  - Отображение топ-10 игроков по количеству заходов
-  - Обновляется автоматически
+- **Top players**:
+  - Display of top 10 players by join count
+  - Auto-updates
 
 #### 🌐 REST API Endpoints
 
-Веб-панель предоставляет REST API для интеграции со сторонними сервисами:
+The web dashboard provides a REST API for integration with third-party services:
 
-| Endpoint | Метод | Описание |
-|----------|-------|----------|
-| `/api/stats` | GET | Общая статистика сервера |
-| `/api/online` | GET | Текущий онлайн и список игроков |
-| `/api/players` | GET | Топ игроков (параметр `limit=N`) |
-| `/api/players?name=PlayerName` | GET | Статистика конкретного игрока |
-| `/api/snapshots?type=hourly&days=7` | GET | Почасовые средние значения |
-| `/api/snapshots?type=daily&days=30` | GET | Дневные средние значения |
-| `/api/snapshots?type=weekday&weeks=4` | GET | Средние по дням недели |
-| `/api/snapshots?type=peak&days=7` | GET | Пиковые часы активности |
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/stats` | GET | General server statistics |
+| `/api/online` | GET | Current online and player list |
+| `/api/players` | GET | Top players (parameter `limit=N`) |
+| `/api/players?name=PlayerName` | GET | Statistics for a specific player |
+| `/api/snapshots?type=hourly&days=7` | GET | Hourly average values |
+| `/api/snapshots?type=daily&days=30` | GET | Daily average values |
+| `/api/snapshots?type=weekday&weeks=4` | GET | Weekday averages |
+| `/api/snapshots?type=peak&days=7` | GET | Peak activity hours |
 
-#### Примеры использования API:
+#### API Usage Examples:
 
 ```bash
-# Получить общую статистику
+# Get general statistics
 curl http://localhost:8080/api/stats
 
-# Получить текущий онлайн
+# Get current online
 curl http://localhost:8080/api/online
 
-# Получить топ 5 игроков
+# Get top 5 players
 curl http://localhost:8080/api/players?limit=5
 
-# Получить статистику игрока Notch
+# Get statistics for player Notch
 curl http://localhost:8080/api/players?name=Notch
 
-# Получить почасовую статистику за 14 дней
+# Get hourly statistics for 14 days
 curl http://localhost:8080/api/snapshots?type=hourly&days=14
 ```
 
-#### Формат ответов API (JSON):
+#### API Response Format (JSON):
 
 **GET /api/stats**:
 ```json
@@ -278,22 +278,22 @@ curl http://localhost:8080/api/snapshots?type=hourly&days=14
 
 ---
 
-## Команды в игре
+## In-Game Commands
 
-### Основная команда: `/online`
+### Main Command: `/online`
 
-| Команда | Описание |
-|---------|----------|
-| `/online` | Показать базовую статистику онлайна |
-| `/online stats` | Детальная статистика сервера |
-| `/online top` | Топ 10 игроков по количеству входов |
-| `/online player <ник>` | Статистика конкретного игрока |
-| `/online hourly [дни]` | Средний онлайн по часам (за N дней, по умолчанию 7) |
-| `/online daily [дни]` | Средний онлайн по дням (за N дней, по умолчанию 7) |
-| `/online weekday [недели]` | Средний онлайн по дням недели (за N недель, по умолчанию 4) |
-| `/online peak [дни]` | Пиковые часы активности (за N дней, по умолчанию 7) |
+| Command | Description |
+|---------|-------------|
+| `/online` | Show basic online statistics |
+| `/online stats` | Detailed server statistics |
+| `/online top` | Top 10 players by join count |
+| `/online player <name>` | Statistics for a specific player |
+| `/online hourly [days]` | Average online by hour (for N days, default 7) |
+| `/online daily [days]` | Average online by day (for N days, default 7) |
+| `/online weekday [weeks]` | Average online by weekday (for N weeks, default 4) |
+| `/online peak [days]` | Peak activity hours (for N days, default 7) |
 
-### Примеры использования:
+### Usage Examples:
 
 ```
 /online
@@ -308,196 +308,196 @@ curl http://localhost:8080/api/snapshots?type=hourly&days=14
 
 ---
 
-## Discord Slash-команды
+## Discord Slash Commands
 
-После успешной настройки бота в Discord будут доступны следующие команды:
+After successful bot setup, the following commands will be available in Discord:
 
-| Команда | Описание |
-|---------|----------|
-| `/online` | Показать текущий онлайн на сервере |
-| `/stats` | Показать детальную статистику сервера |
-| `/top` | Показать топ 10 игроков по активности |
-| `/player <nickname>` | Показать статистику конкретного игрока |
-
----
-
-## Уведомления в Discord
-
-Плагин отправляет красивые embed-сообщения в Discord:
-
-### Типы уведомлений:
-
-1. **Вход игрока**
-   - Показывает имя игрока
-   - Текущий онлайн
-   - Отмечает новых игроков значком 🎉
-
-2. **Выход игрока**
-   - Показывает имя игрока
-   - Текущий онлайн
-   - Время проведенное в игре
-
-3. **Новый рекорд онлайна**
-   - Яркое уведомление о достижении нового рекорда
-   - Количество игроков
-
-4. **Запуск/остановка сервера**
-   - Уведомления о статусе сервера
+| Command | Description |
+|---------|-------------|
+| `/online` | Show current online on the server |
+| `/stats` | Show detailed server statistics |
+| `/top` | Show top 10 players by activity |
+| `/player <nickname>` | Show statistics for a specific player |
 
 ---
 
-## База данных
+## Discord Notifications
 
-### SQLite (по умолчанию)
-- Файл базы данных: `plugins/OnlineMonitor/statistics.db`
-- Подходит для малых и средних серверов
-- Не требует дополнительной настройки
+The plugin sends beautiful embed messages to Discord:
 
-### MySQL (опционально)
-- Для больших серверов с высокой нагрузкой
-- Требует настройки в `config.yml`
-- Поддерживает пул соединений (HikariCP)
+### Notification Types:
 
-### Структура данных:
+1. **Player Join**
+   - Shows player name
+   - Current online count
+   - Marks new players with 🎉 icon
 
-Плагин хранит:
-- Уникальных игроков
-- Историю входов и выходов
-- Время проведенное в игре
-- Снимки онлайна (каждые 5 минут)
-- Максимальный достигнутый онлайн
+2. **Player Quit**
+   - Shows player name
+   - Current online count
+   - Time spent in game
+
+3. **New Online Record**
+   - Bright notification about achieving a new record
+   - Number of players
+
+4. **Server Start/Stop**
+   - Server status notifications
 
 ---
 
-## Возможные проблемы и решения
+## Database
 
-### Бот не запускается в Discord
+### SQLite (default)
+- Database file: `plugins/OnlineMonitor/statistics.db`
+- Suitable for small and medium servers
+- No additional configuration required
 
-**Причина 1**: Не включен MESSAGE CONTENT INTENT
+### MySQL (optional)
+- For large servers with high load
+- Requires configuration in `config.yml`
+- Supports connection pooling (HikariCP)
 
-**Решение**:
-1. Откройте [Discord Developer Portal](https://discord.com/developers/applications)
-2. Выберите ваше приложение → Bot
-3. Включите **MESSAGE CONTENT INTENT**
-4. Сохраните изменения и перезапустите сервер
+### Data Structure:
 
-**Причина 2**: Неправильный токен
+The plugin stores:
+- Unique players
+- Login and logout history
+- Time spent in game
+- Online snapshots (every 5 minutes)
+- Maximum online achieved
 
-**Решение**:
-1. Сгенерируйте новый токен в Discord Developer Portal
-2. Обновите `bot-token` в config.yml
-3. Перезапустите сервер
+---
 
-### Нет уведомлений в Discord
+## Troubleshooting
 
-**Проверьте**:
-- Правильность `channel-id` в config.yml
-- Права бота на отправку сообщений в канале
-- Настройки уведомлений в config.yml (должны быть `true`)
+### Bot doesn't start in Discord
 
-### Slash-команды не работают
+**Cause 1**: MESSAGE CONTENT INTENT not enabled
 
-**Решение**:
-- Подождите до 1 часа (Discord кэширует команды)
-- Перезапригласите бота с правами `applications.commands`
-- Проверьте логи сервера на ошибки
+**Solution**:
+1. Open [Discord Developer Portal](https://discord.com/developers/applications)
+2. Select your application → Bot
+3. Enable **MESSAGE CONTENT INTENT**
+4. Save changes and restart the server
 
-### База данных не создается
+**Cause 2**: Incorrect token
 
-**Решение**:
-- Проверьте права на запись в папке `plugins/OnlineMonitor/`
-- Для MySQL: проверьте правильность учетных данных
-- Проверьте логи сервера на ошибки подключения
+**Solution**:
+1. Generate a new token in Discord Developer Portal
+2. Update `bot-token` in config.yml
+3. Restart the server
 
-### Веб-панель не открывается
+### No notifications in Discord
 
-**Причина 1**: Порт занят другим приложением
+**Check**:
+- Correct `channel-id` in config.yml
+- Bot permissions to send messages in the channel
+- Notification settings in config.yml (should be `true`)
 
-**Решение**:
-- Измените порт в `config.yml` (например, на 8081, 8082)
-- Проверьте, что порт свободен: `netstat -an | grep 8080`
+### Slash commands don't work
 
-**Причина 2**: Файрвол блокирует порт
+**Solution**:
+- Wait up to 1 hour (Discord caches commands)
+- Re-invite the bot with `applications.commands` permissions
+- Check server logs for errors
 
-**Решение**:
-- Добавьте правило в файрвол для выбранного порта
+### Database is not created
+
+**Solution**:
+- Check write permissions in `plugins/OnlineMonitor/` folder
+- For MySQL: verify credentials are correct
+- Check server logs for connection errors
+
+### Web dashboard won't open
+
+**Cause 1**: Port is occupied by another application
+
+**Solution**:
+- Change port in `config.yml` (e.g., to 8081, 8082)
+- Check if port is free: `netstat -an | grep 8080`
+
+**Cause 2**: Firewall blocks the port
+
+**Solution**:
+- Add a firewall rule for the selected port
 - Windows: Windows Defender Firewall → Inbound Rules
 - Linux: `sudo ufw allow 8080`
 
-**Причина 3**: Веб-панель отключена
+**Cause 3**: Web dashboard is disabled
 
-**Решение**:
-- Проверьте `config.yml`: `web-panel.enabled` должен быть `true`
-- Перезапустите сервер после изменения конфигурации
+**Solution**:
+- Check `config.yml`: `web-panel.enabled` should be `true`
+- Restart server after configuration change
 
-### API возвращает пустые данные
+### API returns empty data
 
-**Решение**:
-- Подождите несколько минут после первого запуска
-- Убедитесь, что снимки записываются (проверьте в базе данных)
-- Проверьте, что `snapshot-interval-minutes` настроен в `config.yml`
+**Solution**:
+- Wait a few minutes after first launch
+- Make sure snapshots are being recorded (check database)
+- Verify that `snapshot-interval-minutes` is configured in `config.yml`
 
 ---
 
-## Системные требования
+## System Requirements
 
-### Минимальные:
+### Minimum:
 - Paper/Spigot 1.21.8
 - Java 17
-- 50 МБ свободного места (для SQLite)
-- 256 МБ RAM
+- 50 MB free disk space (for SQLite)
+- 256 MB RAM
 
-### Рекомендуемые:
+### Recommended:
 - Paper 1.21.8
 - Java 21
-- MySQL база данных (для больших серверов)
-- 512 МБ RAM
+- MySQL database (for large servers)
+- 512 MB RAM
 
 ---
 
-## Сборка из исходников
+## Building from Source
 
-Если вы хотите собрать плагин самостоятельно:
+If you want to build the plugin yourself:
 
 ```bash
-# Клонируйте репозиторий
+# Clone the repository
 git clone https://github.com/Vogulev/Minecraft_online_monitor_plugin.git
 cd online_monitor
 
-# Соберите с помощью Maven
+# Build with Maven
 ./mvnw clean package
 
-# Готовый JAR файл будет в:
+# The ready JAR file will be in:
 # target/online_monitor-0.0.1-SNAPSHOT.jar
 ```
 
 ---
 
-## Лицензия
+## License
 
-Этот проект распространяется под лицензией MIT.
-
----
-
-## Поддержка
-
-Если у вас возникли проблемы или есть предложения:
-- Создайте Issue на GitHub
-- Опишите проблему подробно
-- Приложите логи сервера
+This project is distributed under the MIT License.
 
 ---
 
-## Благодарности
+## Support
 
-Используемые библиотеки и технологии:
-- [JDA (Java Discord API)](https://github.com/discord-jda/JDA) - для Discord интеграции
-- [HikariCP](https://github.com/brettwooldridge/HikariCP) - пул соединений с БД
-- [SQLite JDBC](https://github.com/xerial/sqlite-jdbc) - драйвер SQLite
-- [Eclipse Jetty](https://www.eclipse.org/jetty/) - встроенный веб-сервер
-- [Gson](https://github.com/google/gson) - JSON сериализация
-- [Chart.js](https://www.chartjs.org/) - визуализация графиков
+If you have problems or suggestions:
+- Create an Issue on GitHub
+- Describe the problem in detail
+- Attach server logs
 
 ---
 
-**Приятной игры!**
+## Credits
+
+Libraries and technologies used:
+- [JDA (Java Discord API)](https://github.com/discord-jda/JDA) - for Discord integration
+- [HikariCP](https://github.com/brettwooldridge/HikariCP) - database connection pooling
+- [SQLite JDBC](https://github.com/xerial/sqlite-jdbc) - SQLite driver
+- [Eclipse Jetty](https://www.eclipse.org/jetty/) - embedded web server
+- [Gson](https://github.com/google/gson) - JSON serialization
+- [Chart.js](https://www.chartjs.org/) - chart visualization
+
+---
+
+**Enjoy the game!**
