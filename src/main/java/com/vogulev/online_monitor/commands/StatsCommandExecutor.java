@@ -2,6 +2,7 @@ package com.vogulev.online_monitor.commands;
 
 import com.vogulev.online_monitor.DatabaseManager;
 import com.vogulev.online_monitor.formatters.StatsFormatter;
+import com.vogulev.online_monitor.ui.ScoreboardServerStatisticsManager;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
@@ -23,11 +24,13 @@ public class StatsCommandExecutor implements CommandExecutor, TabCompleter {
     private final DatabaseManager database;
     private final Server server;
     private final Map<String, Long> playerJoinTimes;
+    private final ScoreboardServerStatisticsManager scoreboardServerStatisticsManager;
 
-    public StatsCommandExecutor(DatabaseManager database, Server server, Map<String, Long> playerJoinTimes) {
+    public StatsCommandExecutor(DatabaseManager database, Server server, Map<String, Long> playerJoinTimes, ScoreboardServerStatisticsManager scoreboardServerStatisticsManager) {
         this.database = database;
         this.server = server;
         this.playerJoinTimes = playerJoinTimes;
+        this.scoreboardServerStatisticsManager = scoreboardServerStatisticsManager;
     }
 
     @Override
@@ -67,9 +70,12 @@ public class StatsCommandExecutor implements CommandExecutor, TabCompleter {
                 int daysPeak = args.length > 1 ? parseIntOrDefault(args[1], 7) : 7;
                 StatsFormatter.sendPeakHours(sender, database.getPeakHours(daysPeak), daysPeak);
                 break;
+            case "ui":
+                toggleUI(sender);
+                break;
             default:
                 StatsFormatter.sendColoredMessage(sender, "&cНеизвестная команда.");
-                StatsFormatter.sendColoredMessage(sender, "&7Используйте: &e/online [stats|top|player|hourly|daily|weekday|peak]");
+                StatsFormatter.sendColoredMessage(sender, "&7Используйте: &e/online [stats|top|player|hourly|daily|weekday|peak|ui]");
         }
         return true;
     }
@@ -77,7 +83,7 @@ public class StatsCommandExecutor implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1) {
-            return Stream.of("stats", "top", "player", "hourly", "daily", "weekday", "peak", "help")
+            return Stream.of("stats", "top", "player", "hourly", "daily", "weekday", "peak", "ui", "help")
                     .filter(option -> option.startsWith(args[0].toLowerCase()))
                     .toList();
         }
@@ -185,6 +191,27 @@ public class StatsCommandExecutor implements CommandExecutor, TabCompleter {
             return Integer.parseInt(value);
         } catch (NumberFormatException e) {
             return defaultValue;
+        }
+    }
+
+    private void toggleUI(CommandSender sender) {
+        if (!(sender instanceof Player)) {
+            StatsFormatter.sendColoredMessage(sender, "&cOnly players can use this command!");
+            return;
+        }
+
+        if (scoreboardServerStatisticsManager == null) {
+            StatsFormatter.sendColoredMessage(sender, "&cUI panel is disabled in config!");
+            return;
+        }
+
+        Player player = (Player) sender;
+        boolean enabled = scoreboardServerStatisticsManager.toggleScoreboard(player);
+
+        if (enabled) {
+            StatsFormatter.sendColoredMessage(sender, "&aStatistics UI panel enabled!");
+        } else {
+            StatsFormatter.sendColoredMessage(sender, "&cStatistics UI panel disabled!");
         }
     }
 }

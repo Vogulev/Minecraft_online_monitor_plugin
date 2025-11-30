@@ -1,0 +1,279 @@
+[CENTER][SIZE=7][COLOR=#4A90E2]OnlineMonitor[/COLOR][/SIZE]
+[SIZE=4][COLOR=#7B68EE]Advanced Player Activity Tracking with Discord Integration & Web Dashboard[/COLOR][/SIZE]
+
+[IMG]https://i.imgur.com/your-banner-image.png[/IMG]
+
+[SIZE=5][COLOR=#FF6B6B]Transform your server statistics into a powerful analytics tool![/COLOR][/SIZE][/CENTER]
+
+[SIZE=5][B][COLOR=#4A90E2]Description[/COLOR][/B][/SIZE]
+
+OnlineMonitor is a powerful plugin for tracking and analyzing player activity on your Minecraft server. Get detailed statistics, beautiful graphs, and Discord notifications in real-time!
+
+Whether you're running a small community server or a large network, OnlineMonitor provides comprehensive insights into your player base with an intuitive web dashboard and seamless Discord integration.
+
+[SIZE=5][B][COLOR=#4A90E2]Key Features[/COLOR][/B][/SIZE]
+
+[B][COLOR=#7B68EE]Statistics & Analytics:[/COLOR][/B]
+[LIST]
+[*] Real-time online player tracking
+[*] Detailed player statistics (join count, playtime)
+[*] Historical online data (snapshots every 5 minutes)
+[*] Analytics by hour, day, and day of week
+[*] Top players leaderboard by activity
+[*] Personal statistics for each player
+[*] Peak activity hours analysis
+[*] Record tracking (maximum online players)
+[/LIST]
+
+[B][COLOR=#7B68EE]Discord Integration:[/COLOR][/B]
+[LIST]
+[*] Beautiful embed notifications for player join/quit events
+[*] First-time player announcements
+[*] New online record alerts
+[*] Server start/stop notifications
+[*] Discord slash commands for viewing stats
+[*] Customizable notification types
+[*] Automatic command registration
+[/LIST]
+
+[B][COLOR=#7B68EE]Web Dashboard:[/COLOR][/B]
+[LIST]
+[*] Interactive web panel with modern design
+[*] Real-time statistics visualization
+[*] Interactive charts powered by Chart.js
+[*] Hourly and daily online graphs
+[*] Auto-refresh every 30 seconds
+[*] RESTful API for third-party integrations
+[*] Fully responsive mobile-friendly interface
+[*] Top players showcase
+[/LIST]
+
+[B][COLOR=#7B68EE]Database Support:[/COLOR][/B]
+[LIST]
+[*] SQLite support (default, zero configuration)
+[*] MySQL support (for large servers)
+[*] HikariCP connection pooling for performance
+[*] Automatic old data cleanup
+[*] Efficient data storage and retrieval
+[/LIST]
+
+[SIZE=5][B][COLOR=#4A90E2]Screenshots[/COLOR][/B][/SIZE]
+
+[SPOILER="Web Dashboard with Charts"]
+[IMG]https://i.imgur.com/your-web-panel-screenshot.png[/IMG]
+[I]Interactive web dashboard showing hourly and daily statistics[/I]
+[/SPOILER]
+
+[SPOILER="Discord Notifications"]
+[IMG]https://i.imgur.com/your-discord-screenshot.png[/IMG]
+[I]Beautiful Discord embed messages with player activity[/I]
+[/SPOILER]
+
+[SPOILER="In-Game Statistics"]
+[IMG]https://i.imgur.com/your-ingame-screenshot.png[/IMG]
+[I]Detailed player statistics available in-game[/I]
+[/SPOILER]
+
+[SIZE=5][B][COLOR=#4A90E2]Commands[/COLOR][/B][/SIZE]
+
+[B]In-Game Commands:[/B]
+[CODE]
+/online - Show basic online statistics
+/online stats - Show detailed server statistics
+/online top - Show top 10 players by join count
+/online player <name> - Show statistics for a specific player
+/online hourly [days] - Show average online by hour (default: 7 days)
+/online daily [days] - Show average online by day (default: 7 days)
+/online weekday [weeks] - Show average online by weekday (default: 4 weeks)
+/online peak [days] - Show peak activity hours (default: 7 days)
+[/CODE]
+
+[B]Discord Slash Commands:[/B]
+[CODE]
+/online - Show current online players
+/stats - Show detailed server statistics
+/top - Show top 10 players by activity
+/player <nickname> - Show statistics for a specific player
+[/CODE]
+
+[SIZE=5][B][COLOR=#4A90E2]Permissions[/COLOR][/B][/SIZE]
+
+[CODE]
+onlinemonitor.* - All plugin permissions
+onlinemonitor.basic - Basic /online command (default: true)
+onlinemonitor.stats - Access to extended statistics (default: true)
+onlinemonitor.admin - Admin permissions (default: op)
+[/CODE]
+
+[SIZE=5][B][COLOR=#4A90E2]REST API[/COLOR][/B][/SIZE]
+
+OnlineMonitor provides a comprehensive REST API for third-party integrations:
+
+[CODE]
+GET /api/stats - General server statistics
+GET /api/online - Current online count and player list
+GET /api/players?limit=N - Top N players by activity
+GET /api/players?name=PlayerName - Statistics for a specific player
+GET /api/snapshots?type=hourly&days=7 - Hourly average values
+GET /api/snapshots?type=daily&days=30 - Daily average values
+GET /api/snapshots?type=weekday&weeks=4 - Weekday averages
+GET /api/snapshots?type=peak&days=7 - Peak activity hours
+[/CODE]
+
+[B]Example Response (JSON):[/B]
+[CODE]
+{
+  "maxOnline": 42,
+  "uniquePlayers": 156,
+  "totalSessions": 1247,
+  "activeSessions": 8,
+  "totalPlaytime": 125678900
+}
+[/CODE]
+
+[SIZE=5][B][COLOR=#4A90E2]Quick Start Guide[/COLOR][/B][/SIZE]
+
+[B]1. Basic Installation:[/B]
+[LIST=1]
+[*] Download OnlineMonitor.jar
+[*] Place it in your server's plugins/ folder
+[*] Start the server (config.yml will be created)
+[*] Enjoy basic statistics tracking!
+[/LIST]
+
+[B]2. Discord Setup (Optional):[/B]
+[LIST=1]
+[*] Create a Discord bot at [URL='https://discord.com/developers/applications']Discord Developer Portal[/URL]
+[*] Enable MESSAGE CONTENT INTENT in bot settings
+[*] Copy the bot token
+[*] Get your channel ID (enable Developer Mode in Discord)
+[*] Add token and channel ID to config.yml
+[*] Restart the server
+[/LIST]
+
+[B]3. Web Dashboard Setup (Optional):[/B]
+[LIST=1]
+[*] Set web-panel.enabled: true in config.yml
+[*] Configure the port (default: 8080)
+[*] Restart the server
+[*] Access at http://your-server-ip:8080
+[/LIST]
+
+[B]Detailed Setup Guide:[/B] [URL='https://github.com/Vogulev/Minecraft_online_monitor_plugin']View on GitHub[/URL]
+
+[SIZE=5][B][COLOR=#4A90E2]Configuration[/COLOR][/B][/SIZE]
+
+[SPOILER="config.yml Example"]
+[CODE=YAML]
+# Welcome message for joining players
+welcome-message: "Welcome to the server, %player%!"
+
+# Logging settings
+log-unique-joins: true
+log-join-quit: true
+
+# Database (sqlite or mysql)
+database:
+  type: sqlite
+  mysql:
+    host: localhost
+    port: 3306
+    database: minecraft_stats
+    username: root
+    password: password
+
+# Snapshot interval (in minutes)
+snapshot-interval-minutes: 5
+
+# How many days to keep snapshots
+snapshot-days-to-keep: 30
+
+# Timezone offset from UTC
+timezone-offset: +3
+
+# Discord integration
+discord:
+  enabled: false
+  bot-token: "YOUR_BOT_TOKEN_HERE"
+  channel-id: "YOUR_CHANNEL_ID_HERE"
+  notifications:
+    player-join: true
+    player-quit: true
+    new-player: true
+    new-record: true
+    server-start: true
+    server-stop: true
+
+# Web dashboard
+web-panel:
+  enabled: false
+  port: 8080
+[/CODE]
+[/SPOILER]
+
+[SIZE=5][B][COLOR=#4A90E2]System Requirements[/COLOR][/B][/SIZE]
+
+[B]Minimum:[/B]
+[LIST]
+[*] Minecraft: 1.20.4+ (Paper/Spigot)
+[*] Java: 17 or higher
+[*] 50 MB disk space
+[*] 256 MB RAM
+[/LIST]
+
+[B]Recommended:[/B]
+[LIST]
+[*] Paper 1.20.4+
+[*] Java 21
+[*] MySQL database (for large servers)
+[*] 512 MB RAM
+[/LIST]
+
+[SIZE=5][B][COLOR=#4A90E2]Dependencies[/COLOR][/B][/SIZE]
+
+All dependencies are included in the JAR file (no external plugins required):
+[LIST]
+[*] JDA (Java Discord API) - Discord integration
+[*] HikariCP - Database connection pooling
+[*] SQLite JDBC - SQLite database driver
+[*] Eclipse Jetty - Embedded web server
+[*] Gson - JSON serialization
+[*] Chart.js - Chart visualization
+[/LIST]
+
+[SIZE=5][B][COLOR=#4A90E2]Support & Links[/COLOR][/B][/SIZE]
+
+[B]Need Help?[/B]
+[LIST]
+[*] [URL='https://github.com/Vogulev/Minecraft_online_monitor_plugin']GitHub Repository[/URL]
+[*] [URL='https://github.com/Vogulev/Minecraft_online_monitor_plugin/issues']Report a Bug[/URL]
+[/LIST]
+
+[B]Stay Updated:[/B]
+[LIST]
+[*] Watch the GitHub repository for updates
+[*] Check the changelog for new features
+[*] Join community discussions
+[/LIST]
+
+[SIZE=5][B][COLOR=#4A90E2]Why Choose OnlineMonitor?[/COLOR][/B][/SIZE]
+
+[LIST]
+[*] [B]Easy to Use:[/B] Zero configuration required - works out of the box with SQLite
+[*] [B]Lightweight:[/B] Optimized for performance with minimal resource usage
+[*] [B]Feature-Rich:[/B] Comprehensive statistics, web dashboard, and Discord integration
+[*] [B]Customizable:[/B] Extensive configuration options to fit your needs
+[*] [B]Active Development:[/B] Regular updates and bug fixes
+[*] [B]Open Source:[/B] MIT License - free to use and modify
+[*] [B]Well Documented:[/B] Detailed setup guide and API documentation
+[/LIST]
+
+[SIZE=5][B][COLOR=#4A90E2]License[/COLOR][/B][/SIZE]
+
+This plugin is distributed under the MIT License. Source code is available on GitHub.
+
+[CENTER][SIZE=4][B][COLOR=#FF6B6B]If you enjoy this plugin, please leave a 5-star review![/COLOR][/B][/SIZE]
+
+[SIZE=3]Your feedback helps me improve and motivates continued development.[/SIZE]
+
+[SIZE=2]Version: 0.3.0 | Author: Vogulev | License: MIT[/SIZE][/CENTER]

@@ -12,6 +12,7 @@ A powerful plugin for tracking player statistics on your Minecraft server with f
 - Detailed analytics by hours, days, and weekdays
 - Top players by activity
 - Personal statistics for each player
+- **UI Scoreboard** - Real-time statistics panel on screen (right side)
 
 ### Discord Integration:
 - Player join/leave notifications
@@ -181,6 +182,17 @@ web-panel:
   port: 8080
 ```
 
+### UI Scoreboard Settings
+
+```yaml
+scoreboard:
+  # Enable UI statistics panel on screen
+  enabled: true
+
+  # Update interval in seconds (recommended: 1-5)
+  update-interval-seconds: 1
+```
+
 After enabling the web dashboard, it will be accessible at:
 - **Locally**: http://localhost:8080
 - **Network**: http://YOUR_IP:8080
@@ -278,6 +290,38 @@ curl http://localhost:8080/api/snapshots?type=hourly&days=14
 
 ---
 
+## UI Scoreboard
+
+The plugin displays a real-time statistics panel on the right side of the screen:
+
+```
+  ════════════
+  ┃  STATS  ┃
+  ┃          ┃
+  ┃ Online: 5   ┃
+  ┃ Record: 12  ┃
+  ┃ Unique: 23  ┃
+  ┃ Avg: 45min  ┃
+  ┃          ┃
+  ════════════
+```
+
+### Features:
+- ✅ **Always visible** - Stays on screen, doesn't disappear like chat messages
+- ✅ **Auto-updates** - Refreshes every second (configurable)
+- ✅ **Compact design** - Only 6 lines, minimal screen space
+- ✅ **Individual control** - Each player can toggle it on/off
+- ✅ **Automatic** - Shown automatically when joining the server
+- ✅ **Colorful** - Uses Minecraft color codes for visual appeal
+
+### Displayed Information:
+- **Online** - Current number of players (green)
+- **Record** - Maximum online ever achieved (red)
+- **Unique** - Total unique players (purple)
+- **Avg** - Average playtime per player (yellow)
+
+---
+
 ## In-Game Commands
 
 ### Main Command: `/online`
@@ -292,6 +336,7 @@ curl http://localhost:8080/api/snapshots?type=hourly&days=14
 | `/online daily [days]` | Average online by day (for N days, default 7) |
 | `/online weekday [weeks]` | Average online by weekday (for N weeks, default 4) |
 | `/online peak [days]` | Peak activity hours (for N days, default 7) |
+| `/online ui` | **Toggle UI scoreboard panel on/off** |
 
 ### Usage Examples:
 
@@ -304,6 +349,7 @@ curl http://localhost:8080/api/snapshots?type=hourly&days=14
 /online daily 30
 /online weekday 8
 /online peak 7
+/online ui          # Toggle scoreboard on/off
 ```
 
 ---
@@ -436,6 +482,35 @@ The plugin stores:
 - Wait a few minutes after first launch
 - Make sure snapshots are being recorded (check database)
 - Verify that `snapshot-interval-minutes` is configured in `config.yml`
+
+### UI Scoreboard is not showing
+
+**Cause 1**: Scoreboard is disabled in config
+
+**Solution**:
+- Check `config.yml`: `scoreboard.enabled` should be `true`
+- Restart server after configuration change
+
+**Cause 2**: Player disabled it manually
+
+**Solution**:
+- Player can toggle it back on with `/online ui` command
+- Each player has individual control over their scoreboard
+
+**Cause 3**: Another plugin is using the scoreboard
+
+**Solution**:
+- Check for plugin conflicts (other plugins using scoreboard)
+- The scoreboard can only show one thing at a time
+- Disable conflicting plugins or use `/online ui` to switch
+
+### Scoreboard shows wrong data
+
+**Solution**:
+- The scoreboard updates every second by default
+- Check `scoreboard.update-interval-seconds` in config.yml
+- Increase interval if you want less frequent updates
+- Restart server after configuration change
 
 ---
 
