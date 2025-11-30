@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.4.0] - 2025-11-30
+
+### Added
+- **UI Scoreboard Panel** - Real-time statistics display on screen
+  - Compact scoreboard displayed on the right side of the screen
+  - Shows: Online players, Record, Unique players, Average playtime
+  - Auto-updates every second (configurable)
+  - Individual player control via `/online ui` command
+  - Automatically shown on player join
+  - Global enable/disable in config.yml
+  - Compact design (6 lines) for minimal screen space usage
+
+### Changed
+- All UI messages translated to English for better accessibility
+- Scoreboard title shortened to "STATS" for compact display
+- Optimized scoreboard layout for better readability
+
+### Configuration
+- Added `scoreboard.enabled` - enable/disable UI panel globally
+- Added `scoreboard.update-interval-seconds` - scoreboard refresh rate (default: 1 second)
+
+---
+
 ## [0.3.0]
 
 ### Added

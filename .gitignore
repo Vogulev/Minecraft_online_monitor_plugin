@@ -4,6 +4,10 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 config-local.yml
+/mvnw
+/mvnw.cmd
+/.gitattributes
+/.mvn/wrapper/maven-wrapper.properties
 
 ### STS ###
 .apt_generated

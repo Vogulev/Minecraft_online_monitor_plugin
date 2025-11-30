@@ -2,6 +2,7 @@ package com.vogulev.online_monitor.listeners;
 
 import com.vogulev.online_monitor.DatabaseManager;
 import com.vogulev.online_monitor.DiscordBot;
+import com.vogulev.online_monitor.ui.ScoreboardServerStatisticsManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -25,6 +26,7 @@ public class PlayerEventListener implements Listener {
     private final FileConfiguration config;
     private final Map<String, Long> playerJoinTimes;
     private final Runnable onNewRecordCallback;
+    private ScoreboardServerStatisticsManager scoreboardServerStatisticsManager;
 
     public PlayerEventListener(DatabaseManager database, DiscordBot discordBot, Server server,
                                 FileConfiguration config, Map<String, Long> playerJoinTimes,
@@ -35,6 +37,10 @@ public class PlayerEventListener implements Listener {
         this.config = config;
         this.playerJoinTimes = playerJoinTimes;
         this.onNewRecordCallback = onNewRecordCallback;
+    }
+
+    public void setScoreboardManager(ScoreboardServerStatisticsManager scoreboardServerStatisticsManager) {
+        this.scoreboardServerStatisticsManager = scoreboardServerStatisticsManager;
     }
 
     @EventHandler
@@ -79,6 +85,11 @@ public class PlayerEventListener implements Listener {
             onNewRecordCallback.run();
         }
 
+        if (scoreboardServerStatisticsManager != null) {
+            scoreboardServerStatisticsManager.showScoreboard(player);
+            scoreboardServerStatisticsManager.updateScoreboard(player);
+        }
+
         logger.info(player.getName() + " joined. Online: " + server.getOnlinePlayers().size());
     }
 
@@ -102,6 +113,10 @@ public class PlayerEventListener implements Listener {
             }
 
             playerJoinTimes.remove(playerName);
+        }
+
+        if (scoreboardServerStatisticsManager != null) {
+            scoreboardServerStatisticsManager.removePlayer(player);
         }
 
         logger.info(player.getName() + " вышел. Онлайн: " + (server.getOnlinePlayers().size() - 1));

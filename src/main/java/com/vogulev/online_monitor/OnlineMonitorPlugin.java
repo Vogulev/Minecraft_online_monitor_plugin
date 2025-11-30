@@ -4,6 +4,8 @@ import com.vogulev.online_monitor.commands.StatsCommandExecutor;
 import com.vogulev.online_monitor.listeners.PlayerEventListener;
 import com.vogulev.online_monitor.tasks.CleanupTask;
 import com.vogulev.online_monitor.tasks.SnapshotTask;
+import com.vogulev.online_monitor.tasks.UpdateScoreboardTask;
+import com.vogulev.online_monitor.ui.ScoreboardServerStatisticsManager;
 import com.vogulev.online_monitor.web.WebServer;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -20,6 +22,7 @@ public class OnlineMonitorPlugin extends JavaPlugin {
     private DatabaseManager database;
     private DiscordBot discordBot;
     private WebServer webServer;
+    private ScoreboardServerStatisticsManager scoreboardServerStatisticsManager;
     private final Map<String, Long> playerJoinTimes = new HashMap<>();
     private int lastMaxOnline = 0;
 
@@ -41,6 +44,10 @@ public class OnlineMonitorPlugin extends JavaPlugin {
 
         lastMaxOnline = database.getMaxOnline();
 
+        boolean scoreboardEnabled = getConfig().getBoolean("scoreboard.enabled", true);
+        scoreboardServerStatisticsManager = new ScoreboardServerStatisticsManager(database, scoreboardEnabled);
+        logger.info("Scoreboard UI enabled = " + scoreboardEnabled);
+
         PlayerEventListener playerListener = new PlayerEventListener(
                 database,
                 discordBot,
@@ -49,9 +56,11 @@ public class OnlineMonitorPlugin extends JavaPlugin {
                 playerJoinTimes,
                 this::checkNewRecord
         );
+        playerListener.setScoreboardManager(scoreboardServerStatisticsManager);
         getServer().getPluginManager().registerEvents(playerListener, this);
 
-        StatsCommandExecutor statsCommand = new StatsCommandExecutor(database, getServer(), playerJoinTimes);
+        StatsCommandExecutor statsCommand = new StatsCommandExecutor(database, getServer(), playerJoinTimes,
+                scoreboardServerStatisticsManager);
         getCommand("online").setExecutor(statsCommand);
         getCommand("online").setTabCompleter(statsCommand);
 
@@ -120,7 +129,16 @@ public class OnlineMonitorPlugin extends JavaPlugin {
                 24000L
         );
 
+        long scoreboardUpdateInterval = getConfig().getLong("scoreboard.update-interval-seconds", 1) * 20L;
+        getServer().getScheduler().runTaskTimer(
+                this,
+                new UpdateScoreboardTask(scoreboardServerStatisticsManager),
+                20L,
+                scoreboardUpdateInterval
+        );
+
         logger.info("Online snapshots will be recorded every " + (snapshotInterval / 1200) + " minutes");
+        logger.info("Scoreboard will be updated every " + (scoreboardUpdateInterval / 20) + " seconds");
     }
 
     private void initializeDiscord() {
@@ -193,9 +211,6 @@ public class OnlineMonitorPlugin extends JavaPlugin {
         }
     }
 
-    /**
-     * Получить DatabaseManager (для Discord бота)
-     */
     public DatabaseManager getDatabase() {
         return database;
     }
