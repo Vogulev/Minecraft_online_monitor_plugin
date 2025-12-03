@@ -15,6 +15,8 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import static com.vogulev.online_monitor.i18n.LocalizationManager.getMessage;
+
 /**
  * Обработчик событий входа и выхода игроков
  */
@@ -53,7 +55,7 @@ public class PlayerEventListener implements Listener {
         boolean isFirstTime = !player.hasPlayedBefore();
         if (isFirstTime) {
             database.incrementUniquePlayer();
-            logger.info("Новый игрок присоединился: " + player.getName());
+            logger.info("New player joined: " + player.getName());
         }
 
         database.recordPlayerJoin(playerName);
@@ -61,7 +63,7 @@ public class PlayerEventListener implements Listener {
         playerJoinTimes.put(playerName, System.currentTimeMillis());
 
         String welcomeMessage = config.getString("welcome-message",
-                "Добро пожаловать на сервер, %player%! Онлайн: %online%");
+                getMessage("welcome.default"));
 
         welcomeMessage = welcomeMessage
                 .replace("%player%", playerName)
@@ -105,7 +107,7 @@ public class PlayerEventListener implements Listener {
 
             database.recordPlayerQuit(playerName, sessionTime);
 
-            logger.info(playerName + " провел в игре: " + minutes + " минут");
+            logger.info(playerName + " spent in game: " + minutes + " minutes");
 
             if (discordBot != null && config.getBoolean("discord.notifications.player-quit", true)) {
                 int currentOnline = server.getOnlinePlayers().size() - 1;
@@ -119,7 +121,7 @@ public class PlayerEventListener implements Listener {
             scoreboardServerStatisticsManager.removePlayer(player);
         }
 
-        logger.info(player.getName() + " вышел. Онлайн: " + (server.getOnlinePlayers().size() - 1));
+        logger.info(player.getName() + " left. Online: " + (server.getOnlinePlayers().size() - 1));
     }
 
     private void updateMaxOnline() {

@@ -1,5 +1,10 @@
 # Конфигурация OnlineMonitor плагина
 
+# Язык плагина (language)
+# Доступные языки: en (English), ru (Русский)
+# Available languages: en (English), ru (Russian)
+language: en
+
 # Сообщение при входе игрока
 # Доступные плейсхолдеры: %player%, %online%
 # Доступные цветовые коды: &0-&9, &a-&f (используйте & для цветов)

@@ -15,6 +15,8 @@ import java.awt.Color;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import static com.vogulev.online_monitor.i18n.LocalizationManager.getMessage;
+
 public class DiscordBot extends ListenerAdapter {
     private static final Logger logger = Logger.getLogger("OnlineMonitor");
     private JDA jda;
@@ -29,45 +31,43 @@ public class DiscordBot extends ListenerAdapter {
         this.channelId = channelId;
 
         try {
-            logger.info("Создание JDA соединения...");
-            logger.info("Токен начинается с: " + (token.length() > 10 ? token.substring(0, 10) + "..." : "слишком короткий"));
+            logger.info("Creating JDA connection...");
+            logger.info("Token starts with: " + (token.length() > 10 ? token.substring(0, 10) + "..." : "too short"));
             logger.info("Channel ID: " + channelId);
 
             jda = JDABuilder.createDefault(token)
                     .enableIntents(GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MESSAGES)
-                    .setActivity(Activity.watching("Minecraft сервер"))
+                    .setActivity(Activity.watching(getMessage("discord.activity.watching")))
                     .addEventListeners(this)
                     .build();
 
-            logger.info("JDA создан, ожидание готовности...");
+            logger.info("JDA created, waiting for ready...");
             jda.awaitReady();
-            logger.info("JDA готов!");
+            logger.info("JDA ready!");
 
-            logger.info("Регистрация slash команд...");
+            logger.info("Registering slash commands...");
             jda.updateCommands().addCommands(
-                    Commands.slash("online", "Показать текущий онлайн на сервере"),
-                    Commands.slash("stats", "Показать детальную статистику сервера"),
-                    Commands.slash("top", "Показать топ игроков по активности"),
-                    Commands.slash("player", "Показать статистику игрока")
-                            .addOption(OptionType.STRING, "nickname", "Никнейм игрока", true)
+                    Commands.slash("online", getMessage("discord.command.online")),
+                    Commands.slash("stats", getMessage("discord.command.stats")),
+                    Commands.slash("top", getMessage("discord.command.top")),
+                    Commands.slash("player", getMessage("discord.command.player"))
+                            .addOption(OptionType.STRING, "nickname", getMessage("discord.command.player.option"), true)
             ).queue(
-                success -> logger.info("Slash команды успешно зарегистрированы!"),
-                error -> logger.warning("Ошибка регистрации команд: " + error.getMessage())
+                success -> logger.info("Slash commands successfully registered!"),
+                error -> logger.warning("Error registering commands: " + error.getMessage())
             );
 
-            logger.info("Discord bot успешно запущен! Статус: " + jda.getStatus());
+            logger.info("Discord bot successfully started! Status: " + jda.getStatus());
         } catch (InterruptedException e) {
-            logger.severe("Ошибка ожидания запуска Discord бота: " + e.getMessage());
-            e.printStackTrace();
+            logger.severe("Error waiting for Discord bot to start: " + e.getMessage());
             Thread.currentThread().interrupt();
         } catch (Exception e) {
-            logger.severe("Ошибка запуска Discord бота: " + e.getClass().getName() + ": " + e.getMessage());
-            logger.severe("Возможные причины:");
-            logger.severe("  1. Неправильный токен бота");
-            logger.severe("  2. Не включен MESSAGE CONTENT INTENT в Discord Developer Portal");
-            logger.severe("  3. Бот был удален или токен устарел");
-            logger.severe("  4. Проблемы с подключением к Discord API");
-            e.printStackTrace();
+            logger.severe("Error starting Discord bot: " + e.getClass().getName() + ": " + e.getMessage());
+            logger.severe("Possible reasons:");
+            logger.severe("  1. Incorrect bot token");
+            logger.severe("  2. MESSAGE CONTENT INTENT not enabled in Discord Developer Portal");
+            logger.severe("  3. Bot was deleted or token is expired");
+            logger.severe("  4. Problems connecting to Discord API");
         }
     }
 
@@ -81,7 +81,7 @@ public class DiscordBot extends ListenerAdapter {
                     jda.shutdownNow();
                     jda.awaitShutdown();
                 }
-                logger.info("Discord bot остановлен");
+                logger.info("Discord bot stopped");
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 jda.shutdownNow();
@@ -115,12 +115,13 @@ public class DiscordBot extends ListenerAdapter {
         int uniquePlayers = plugin.getDatabase().getUniquePlayersCount();
 
         EmbedBuilder embed = new EmbedBuilder()
-                .setTitle("📊 Статистика онлайна")
+                .setTitle(getMessage("discord.embed.online.title"))
                 .setColor(Color.GREEN)
-                .addField("🟢 Сейчас онлайн", currentOnline + " игроков", true)
-                .addField("🏆 Максимум онлайна", String.valueOf(maxOnline), true)
-                .addField("👥 Уникальных игроков", String.valueOf(uniquePlayers), true)
-                .setFooter("OnlineMonitor", null)
+                .addField(getMessage("discord.embed.online.current"),
+                          getMessage("discord.embed.online.current.value", currentOnline), true)
+                .addField(getMessage("discord.embed.online.max"), String.valueOf(maxOnline), true)
+                .addField(getMessage("discord.embed.online.unique"), String.valueOf(uniquePlayers), true)
+                .setFooter(getMessage("discord.embed.footer"), null)
                 .setTimestamp(java.time.Instant.now());
 
         event.getHook().sendMessageEmbeds(embed.build()).queue();
@@ -139,15 +140,16 @@ public class DiscordBot extends ListenerAdapter {
         long averageMinutes = uniquePlayers > 0 ? (totalPlaytime / uniquePlayers) / (1000 * 60) : 0;
 
         EmbedBuilder embed = new EmbedBuilder()
-                .setTitle("📈 Детальная статистика")
+                .setTitle(getMessage("discord.embed.stats.title"))
                 .setColor(Color.BLUE)
-                .addField("🟢 Текущий онлайн", String.valueOf(currentOnline), true)
-                .addField("🏆 Рекорд онлайна", String.valueOf(maxOnline), true)
-                .addField("👥 Уникальных игроков", String.valueOf(uniquePlayers), true)
-                .addField("📝 Всего сессий", String.valueOf(totalSessions), true)
-                .addField("⏱️ Среднее время игры", averageMinutes + " мин", true)
-                .addField("🎮 Активных сессий", String.valueOf(activeSessions), true)
-                .setFooter("OnlineMonitor", null)
+                .addField(getMessage("discord.embed.stats.current"), String.valueOf(currentOnline), true)
+                .addField(getMessage("discord.embed.stats.record"), String.valueOf(maxOnline), true)
+                .addField(getMessage("discord.embed.stats.unique"), String.valueOf(uniquePlayers), true)
+                .addField(getMessage("discord.embed.stats.sessions"), String.valueOf(totalSessions), true)
+                .addField(getMessage("discord.embed.stats.avg_time"),
+                          getMessage("discord.embed.stats.avg_time.value", averageMinutes), true)
+                .addField(getMessage("discord.embed.stats.active"), String.valueOf(activeSessions), true)
+                .setFooter(getMessage("discord.embed.footer"), null)
                 .setTimestamp(java.time.Instant.now());
 
         event.getHook().sendMessageEmbeds(embed.build()).queue();
@@ -159,12 +161,12 @@ public class DiscordBot extends ListenerAdapter {
         Map<String, Integer> topPlayers = plugin.getDatabase().getTopPlayersByJoins(10);
 
         if (topPlayers.isEmpty()) {
-            event.getHook().sendMessage("❌ Пока нет данных о игроках").queue();
+            event.getHook().sendMessage(getMessage("discord.embed.top.empty")).queue();
             return;
         }
 
         EmbedBuilder embed = new EmbedBuilder()
-                .setTitle("🏅 Топ игроков по активности")
+                .setTitle(getMessage("discord.embed.top.title"))
                 .setColor(Color.ORANGE);
 
         int position = 1;
@@ -173,12 +175,12 @@ public class DiscordBot extends ListenerAdapter {
             String medal = position == 1 ? "🥇" : position == 2 ? "🥈" : position == 3 ? "🥉" : "▪️";
             topList.append(medal).append(" **").append(position).append(".** ")
                     .append(entry.getKey()).append(" - ")
-                    .append(entry.getValue()).append(" входов\n");
+                    .append(getMessage("discord.embed.top.joins", entry.getValue())).append("\n");
             position++;
         }
 
         embed.setDescription(topList.toString());
-        embed.setFooter("OnlineMonitor", null);
+        embed.setFooter(getMessage("discord.embed.footer"), null);
         embed.setTimestamp(java.time.Instant.now());
 
         event.getHook().sendMessageEmbeds(embed.build()).queue();
@@ -196,24 +198,25 @@ public class DiscordBot extends ListenerAdapter {
         long totalMinutes = (totalPlaytime / (1000 * 60)) % 60;
 
         if (totalJoins == 0) {
-            event.getHook().sendMessage("❌ Игрок **" + playerName + "** не найден или никогда не заходил на сервер").queue();
+            event.getHook().sendMessage(getMessage("discord.embed.player.not_found", playerName)).queue();
             return;
         }
 
         boolean isOnline = plugin.getServer().getPlayer(playerName) != null;
 
         EmbedBuilder embed = new EmbedBuilder()
-                .setTitle("👤 Статистика игрока " + playerName)
+                .setTitle(getMessage("discord.embed.player.title", playerName))
                 .setColor(isOnline ? Color.GREEN : Color.GRAY)
-                .addField("📊 Статус", isOnline ? "🟢 Онлайн" : "⚫ Оффлайн", true)
-                .addField("🔢 Всего входов", String.valueOf(totalJoins), true)
-                .addField("⏱️ Общее время игры", totalHours + " ч " + totalMinutes + " мин", true)
-                .setFooter("OnlineMonitor", null)
+                .addField(getMessage("discord.embed.player.status"),
+                          isOnline ? getMessage("discord.embed.player.online") : getMessage("discord.embed.player.offline"), true)
+                .addField(getMessage("discord.embed.player.joins"), String.valueOf(totalJoins), true)
+                .addField(getMessage("discord.embed.player.playtime"),
+                          getMessage("discord.embed.player.playtime.value", totalHours, totalMinutes), true)
+                .setFooter(getMessage("discord.embed.footer"), null)
                 .setTimestamp(java.time.Instant.now());
 
         event.getHook().sendMessageEmbeds(embed.build()).queue();
     }
-
     // === Методы для отправки уведомлений ===
 
     public void sendPlayerJoinNotification(String playerName, int currentOnline, boolean isNewPlayer) {
@@ -222,11 +225,15 @@ public class DiscordBot extends ListenerAdapter {
         TextChannel channel = jda.getTextChannelById(channelId);
         if (channel == null) return;
 
+        String message = isNewPlayer ?
+                getMessage("discord.notification.join.new", playerName) :
+                getMessage("discord.notification.join", playerName);
+
         EmbedBuilder embed = new EmbedBuilder()
                 .setColor(Color.GREEN)
-                .setDescription((isNewPlayer ? "🎉 **Новый игрок** " : "🎮 ") +
-                        "**" + playerName + "** зашел на сервер")
-                .addField("Онлайн", currentOnline + " игроков", false)
+                .setDescription(message)
+                .addField(getMessage("discord.notification.online"),
+                          getMessage("discord.notification.online.value", currentOnline), false)
                 .setTimestamp(java.time.Instant.now());
 
         channel.sendMessageEmbeds(embed.build()).queue();
@@ -240,9 +247,11 @@ public class DiscordBot extends ListenerAdapter {
 
         EmbedBuilder embed = new EmbedBuilder()
                 .setColor(Color.ORANGE)
-                .setDescription("👋 **" + playerName + "** вышел с сервера")
-                .addField("Онлайн", currentOnline + " игроков", false)
-                .addField("Время в игре", sessionMinutes + " мин", false)
+                .setDescription(getMessage("discord.notification.quit", playerName))
+                .addField(getMessage("discord.notification.online"),
+                          getMessage("discord.notification.online.value", currentOnline), false)
+                .addField(getMessage("discord.notification.playtime"),
+                          getMessage("discord.notification.playtime.value", sessionMinutes), false)
                 .setTimestamp(java.time.Instant.now());
 
         channel.sendMessageEmbeds(embed.build()).queue();
@@ -255,9 +264,9 @@ public class DiscordBot extends ListenerAdapter {
         if (channel == null) return;
 
         EmbedBuilder embed = new EmbedBuilder()
-                .setTitle("🏆 НОВЫЙ РЕКОРД ОНЛАЙНА!")
+                .setTitle(getMessage("discord.notification.record.title"))
                 .setColor(Color.RED)
-                .setDescription("Достигнут новый рекорд: **" + newRecord + " игроков!** 🎉")
+                .setDescription(getMessage("discord.notification.record.message", newRecord))
                 .setTimestamp(java.time.Instant.now());
 
         channel.sendMessageEmbeds(embed.build()).queue();
@@ -270,9 +279,9 @@ public class DiscordBot extends ListenerAdapter {
         if (channel == null) return;
 
         EmbedBuilder embed = new EmbedBuilder()
-                .setTitle("🟢 Сервер запущен")
+                .setTitle(getMessage("discord.notification.server.start.title"))
                 .setColor(Color.GREEN)
-                .setDescription("Minecraft сервер успешно запущен и готов к игре!")
+                .setDescription(getMessage("discord.notification.server.start.message"))
                 .setTimestamp(java.time.Instant.now());
 
         channel.sendMessageEmbeds(embed.build()).queue();
@@ -285,15 +294,15 @@ public class DiscordBot extends ListenerAdapter {
         if (channel == null) return;
 
         EmbedBuilder embed = new EmbedBuilder()
-                .setTitle("🔴 Сервер остановлен")
+                .setTitle(getMessage("discord.notification.server.stop.title"))
                 .setColor(Color.RED)
-                .setDescription("Minecraft сервер был остановлен")
+                .setDescription(getMessage("discord.notification.server.stop.message"))
                 .setTimestamp(java.time.Instant.now());
 
         try {
             channel.sendMessageEmbeds(embed.build()).complete();
         } catch (Exception e) {
-            logger.warning("Не удалось отправить уведомление об остановке сервера: " + e.getMessage());
+            logger.warning("Can't send notification about server stopped: " + e.getMessage());
         }
 
     }

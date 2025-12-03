@@ -14,6 +14,8 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 
+import static com.vogulev.online_monitor.i18n.LocalizationManager.getMessage;
+
 
 /**
  * Управление scoreboard для отображения статистики онлайна
@@ -54,9 +56,9 @@ public class ScoreboardServerStatisticsManager
 
         Scoreboard scoreboard = manager.getNewScoreboard();
         Objective objective = scoreboard.registerNewObjective("online_stats", "dummy",
-                ChatColor.translateAlternateColorCodes('&', "&6&lSTATS"));
+                ChatColor.translateAlternateColorCodes('&', getMessage("scoreboard.title")));
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-        objective.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&6&lSTATS"));
+        objective.setDisplayName(ChatColor.translateAlternateColorCodes('&', getMessage("scoreboard.title")));
 
         playerScoreboards.put(playerId, scoreboard);
         player.setScoreboard(scoreboard);
@@ -117,10 +119,10 @@ public class ScoreboardServerStatisticsManager
         long totalPlaytime = database.getTotalPlaytime();
         int averageMinutes = uniquePlayers > 0 ? (int) ((totalPlaytime / uniquePlayers) / (1000 * 60)) : 0;
 
-        objective.getScore(colorize("&7Avg(min):")).setScore(averageMinutes);
-        objective.getScore(colorize("&7Online:")).setScore(currentOnline);
-        objective.getScore(colorize("&7Record:")).setScore(maxOnline);
-        objective.getScore(colorize("&7Unique:")).setScore(uniquePlayers);
+        objective.getScore(colorize(getMessage("scoreboard.avg"))).setScore(averageMinutes);
+        objective.getScore(colorize(getMessage("scoreboard.online"))).setScore(currentOnline);
+        objective.getScore(colorize(getMessage("scoreboard.record"))).setScore(maxOnline);
+        objective.getScore(colorize(getMessage("scoreboard.unique"))).setScore(uniquePlayers);
     }
 
 

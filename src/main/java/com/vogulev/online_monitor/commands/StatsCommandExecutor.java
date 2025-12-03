@@ -14,8 +14,10 @@ import org.bukkit.entity.Player;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static com.vogulev.online_monitor.i18n.LocalizationManager.getMessage;
+
 
 /**
  * Обработчик команд /online
@@ -26,7 +28,8 @@ public class StatsCommandExecutor implements CommandExecutor, TabCompleter {
     private final Map<String, Long> playerJoinTimes;
     private final ScoreboardServerStatisticsManager scoreboardServerStatisticsManager;
 
-    public StatsCommandExecutor(DatabaseManager database, Server server, Map<String, Long> playerJoinTimes, ScoreboardServerStatisticsManager scoreboardServerStatisticsManager) {
+    public StatsCommandExecutor(DatabaseManager database, Server server, Map<String, Long> playerJoinTimes,
+                                ScoreboardServerStatisticsManager scoreboardServerStatisticsManager) {
         this.database = database;
         this.server = server;
         this.playerJoinTimes = playerJoinTimes;
@@ -51,7 +54,7 @@ public class StatsCommandExecutor implements CommandExecutor, TabCompleter {
                 if (args.length > 1) {
                     sendPlayerStats(sender, args[1]);
                 } else {
-                    StatsFormatter.sendColoredMessage(sender, "&cИспользование: &e/online player <ник>");
+                    StatsFormatter.sendColoredMessage(sender, getMessage("command.usage.player"));
                 }
                 break;
             case "hourly":
@@ -74,8 +77,8 @@ public class StatsCommandExecutor implements CommandExecutor, TabCompleter {
                 toggleUI(sender);
                 break;
             default:
-                StatsFormatter.sendColoredMessage(sender, "&cНеизвестная команда.");
-                StatsFormatter.sendColoredMessage(sender, "&7Используйте: &e/online [stats|top|player|hourly|daily|weekday|peak|ui]");
+                StatsFormatter.sendColoredMessage(sender, getMessage("command.unknown"));
+                StatsFormatter.sendColoredMessage(sender, getMessage("command.usage"));
         }
         return true;
     }
@@ -103,11 +106,11 @@ public class StatsCommandExecutor implements CommandExecutor, TabCompleter {
         int maxOnline = database.getMaxOnline();
         int uniquePlayers = database.getUniquePlayersCount();
 
-        StatsFormatter.sendColoredMessage(sender, "&6&l=== &eСтатистика онлайна &6&l===");
-        StatsFormatter.sendColoredMessage(sender, "&7Сейчас онлайн: &a" + currentOnline + " &7игроков");
-        StatsFormatter.sendColoredMessage(sender, "&7Максимум онлайна: &b" + maxOnline);
-        StatsFormatter.sendColoredMessage(sender, "&7Уникальных игроков: &d" + uniquePlayers);
-        StatsFormatter.sendColoredMessage(sender, "&8Используйте &e/online stats &8для детальной статистики");
+        StatsFormatter.sendColoredMessage(sender, getMessage("command.stats.header"));
+        StatsFormatter.sendColoredMessage(sender, getMessage("command.stats.current", currentOnline));
+        StatsFormatter.sendColoredMessage(sender, getMessage("command.stats.max", maxOnline));
+        StatsFormatter.sendColoredMessage(sender, getMessage("command.stats.unique", uniquePlayers));
+        StatsFormatter.sendColoredMessage(sender, getMessage("command.stats.hint"));
     }
 
     private void sendDetailedStats(CommandSender sender) {
@@ -119,35 +122,37 @@ public class StatsCommandExecutor implements CommandExecutor, TabCompleter {
         long totalPlaytime = database.getTotalPlaytime();
         long averageMinutes = uniquePlayers > 0 ? (totalPlaytime / uniquePlayers) / (1000 * 60) : 0;
 
-        StatsFormatter.sendColoredMessage(sender, "&6&l=== &eДетальная статистика &6&l===");
-        StatsFormatter.sendColoredMessage(sender, "&7Текущий онлайн: &a" + currentOnline);
-        StatsFormatter.sendColoredMessage(sender, "&7Рекорд онлайна: &c&l" + maxOnline);
-        StatsFormatter.sendColoredMessage(sender, "&7Уникальных игроков: &d" + uniquePlayers);
-        StatsFormatter.sendColoredMessage(sender, "&7Всего сессий: &b" + totalSessions);
-        StatsFormatter.sendColoredMessage(sender, "&7Среднее время игры: &e" + averageMinutes + " &7мин");
-        StatsFormatter.sendColoredMessage(sender, "&7Активных сессий: &a" + activeSessions);
+        StatsFormatter.sendColoredMessage(sender, getMessage("command.detailed.header"));
+        StatsFormatter.sendColoredMessage(sender, getMessage("command.detailed.current", currentOnline));
+        StatsFormatter.sendColoredMessage(sender, getMessage("command.detailed.record", maxOnline));
+        StatsFormatter.sendColoredMessage(sender, getMessage("command.detailed.unique", uniquePlayers));
+        StatsFormatter.sendColoredMessage(sender, getMessage("command.detailed.sessions", totalSessions));
+        StatsFormatter.sendColoredMessage(sender, getMessage("command.detailed.avg_time", averageMinutes));
+        StatsFormatter.sendColoredMessage(sender, getMessage("command.detailed.active", activeSessions));
 
         if (currentOnline > 0) {
             String onlinePlayers = server.getOnlinePlayers().stream()
                     .map(Player::getName)
-                    .collect(Collectors.joining("&7, &f"));
-            StatsFormatter.sendColoredMessage(sender, "&7Онлайн: &f" + onlinePlayers);
+                    .reduce((a, b) -> a + "§7, §f" + b)
+                    .orElse("");
+            StatsFormatter.sendColoredMessage(sender, getMessage("command.detailed.online", onlinePlayers));
         }
     }
 
     private void sendTopStats(CommandSender sender) {
-        StatsFormatter.sendColoredMessage(sender, "&6&l=== &eТоп игроков по активности &6&l===");
+        StatsFormatter.sendColoredMessage(sender, getMessage("command.top.header"));
 
         Map<String, Integer> topPlayers = database.getTopPlayersByJoins(10);
         if (topPlayers.isEmpty()) {
-            StatsFormatter.sendColoredMessage(sender, "&cПока нет данных о игроках");
+            StatsFormatter.sendColoredMessage(sender, getMessage("command.top.empty"));
             return;
         }
 
         int position = 1;
         for (Map.Entry<String, Integer> entry : topPlayers.entrySet()) {
-            String medal = position == 1 ? "&6&l" : position == 2 ? "&7&l" : position == 3 ? "&c&l" : "&e";
-            StatsFormatter.sendColoredMessage(sender, medal + position + ". &f" + entry.getKey() + "&7: &a" + entry.getValue() + " &7входов");
+            String medal = position == 1 ? "§6§l" : position == 2 ? "§7§l" : position == 3 ? "§c§l" : "§e";
+            StatsFormatter.sendColoredMessage(sender,
+                    getMessage("command.top.position", medal, position, entry.getKey(), entry.getValue()));
             position++;
         }
     }
@@ -159,26 +164,26 @@ public class StatsCommandExecutor implements CommandExecutor, TabCompleter {
         long totalHours = totalPlaytime / (1000 * 60 * 60);
         long totalMinutes = (totalPlaytime / (1000 * 60)) % 60;
 
-        StatsFormatter.sendColoredMessage(sender, "&6&l=== &eСтатистика игрока &b" + playerName + " &6&l===");
+        StatsFormatter.sendColoredMessage(sender, getMessage("command.player.header", playerName));
 
         if (player != null && player.isOnline()) {
             Long joinTime = playerJoinTimes.get(playerName);
             long sessionTime = joinTime != null ? System.currentTimeMillis() - joinTime : 0;
             long sessionMinutes = sessionTime / (1000 * 60);
 
-            StatsFormatter.sendColoredMessage(sender, "&7Статус: &a&lОнлайн");
-            StatsFormatter.sendColoredMessage(sender, "&7Текущая сессия: &e" + sessionMinutes + " &7минут");
-            StatsFormatter.sendColoredMessage(sender, "&7Пинг: &b" + player.getPing() + " &7мс");
-            StatsFormatter.sendColoredMessage(sender, "&7Локация: &d" + formatLocation(player.getLocation()));
+            StatsFormatter.sendColoredMessage(sender, getMessage("command.player.status.online"));
+            StatsFormatter.sendColoredMessage(sender, getMessage("command.player.session", sessionMinutes));
+            StatsFormatter.sendColoredMessage(sender, getMessage("command.player.ping", player.getPing()));
+            StatsFormatter.sendColoredMessage(sender, getMessage("command.player.location", formatLocation(player.getLocation())));
         } else {
-            StatsFormatter.sendColoredMessage(sender, "&7Статус: &8&lОффлайн");
+            StatsFormatter.sendColoredMessage(sender, getMessage("command.player.status.offline"));
         }
 
         if (totalJoins > 0) {
-            StatsFormatter.sendColoredMessage(sender, "&7Всего входов: &a" + totalJoins);
-            StatsFormatter.sendColoredMessage(sender, "&7Общее время игры: &e" + totalHours + " &7ч &e" + totalMinutes + " &7мин");
+            StatsFormatter.sendColoredMessage(sender, getMessage("command.player.joins", totalJoins));
+            StatsFormatter.sendColoredMessage(sender, getMessage("command.player.total_time", totalHours, totalMinutes));
         } else {
-            StatsFormatter.sendColoredMessage(sender, "&cИгрок не найден или никогда не заходил на сервер");
+            StatsFormatter.sendColoredMessage(sender, getMessage("command.player.not_found"));
         }
     }
 
@@ -196,12 +201,12 @@ public class StatsCommandExecutor implements CommandExecutor, TabCompleter {
 
     private void toggleUI(CommandSender sender) {
         if (!(sender instanceof Player)) {
-            StatsFormatter.sendColoredMessage(sender, "&cOnly players can use this command!");
+            StatsFormatter.sendColoredMessage(sender, getMessage("command.ui.player_only"));
             return;
         }
 
         if (scoreboardServerStatisticsManager == null) {
-            StatsFormatter.sendColoredMessage(sender, "&cUI panel is disabled in config!");
+            StatsFormatter.sendColoredMessage(sender, getMessage("command.ui.disabled"));
             return;
         }
 
@@ -209,9 +214,9 @@ public class StatsCommandExecutor implements CommandExecutor, TabCompleter {
         boolean enabled = scoreboardServerStatisticsManager.toggleScoreboard(player);
 
         if (enabled) {
-            StatsFormatter.sendColoredMessage(sender, "&aStatistics UI panel enabled!");
+            StatsFormatter.sendColoredMessage(sender, getMessage("command.ui.enabled"));
         } else {
-            StatsFormatter.sendColoredMessage(sender, "&cStatistics UI panel disabled!");
+            StatsFormatter.sendColoredMessage(sender, getMessage("command.ui.disabled.player"));
         }
     }
 }

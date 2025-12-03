@@ -13,6 +13,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import static com.vogulev.online_monitor.i18n.LocalizationManager.initialize;
+
 /**
  * Главный класс плагина OnlineMonitor
  * Отвечает только за lifecycle и координацию компонентов
@@ -29,6 +31,10 @@ public class OnlineMonitorPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         saveDefaultConfig();
+
+        // Initialize localization
+        String language = getConfig().getString("language", "en");
+        initialize(language);
 
         database = new DatabaseManager(getDataFolder());
         database.setPlugin(this);
@@ -143,23 +149,23 @@ public class OnlineMonitorPlugin extends JavaPlugin {
 
     private void initializeDiscord() {
         boolean discordEnabled = getConfig().getBoolean("discord.enabled", false);
-        logger.info("Discord интеграция enabled=" + discordEnabled);
+        logger.info("Discord integration enabled=" + discordEnabled);
 
         if (!discordEnabled) {
-            logger.info("Discord бот отключен в конфигурации (discord.enabled=false)");
+            logger.info("Discord bot disabled in configuration (discord.enabled=false)");
             return;
         }
 
         String botToken = getConfig().getString("discord.bot-token");
         String channelId = getConfig().getString("discord.channel-id");
 
-        logger.info("Discord bot-token длина: " + (botToken != null ? botToken.length() : "null"));
+        logger.info("Discord bot-token length: " + (botToken != null ? botToken.length() : "null"));
         logger.info("Discord channel-id: " + (channelId != null ? channelId : "null"));
 
         if (botToken != null && !botToken.equals("YOUR_BOT_TOKEN_HERE") &&
             channelId != null && !channelId.equals("YOUR_CHANNEL_ID_HERE")) {
 
-            logger.info("Запуск Discord бота...");
+            logger.info("Starting Discord bot...");
             discordBot = new DiscordBot(this);
             discordBot.start(botToken, channelId);
 
@@ -168,12 +174,12 @@ public class OnlineMonitorPlugin extends JavaPlugin {
                         () -> discordBot.sendServerStartNotification(), 40L);
             }
         } else {
-            logger.warning("Discord bot не запущен: проверьте настройки bot-token и channel-id в config.yml");
+            logger.warning("Discord bot not started: check bot-token and channel-id settings in config.yml");
             if (botToken == null || botToken.equals("YOUR_BOT_TOKEN_HERE")) {
-                logger.warning("  - bot-token не настроен!");
+                logger.warning("  - bot-token is not configured!");
             }
             if (channelId == null || channelId.equals("YOUR_CHANNEL_ID_HERE")) {
-                logger.warning("  - channel-id не настроен!");
+                logger.warning("  - channel-id is not configured!");
             }
         }
     }
@@ -183,7 +189,7 @@ public class OnlineMonitorPlugin extends JavaPlugin {
         logger.info("Web panel enabled = " + webEnabled);
 
         if (!webEnabled) {
-            logger.info("Web panel отключена в конфигурации (web-panel.enabled = false)");
+            logger.info("Web panel disabled in configuration (web-panel.enabled = false)");
             return;
         }
 
@@ -193,7 +199,7 @@ public class OnlineMonitorPlugin extends JavaPlugin {
             webServer = new WebServer(this, database, port);
             webServer.start();
         } catch (Exception e) {
-            logger.severe("Не удалось запустить web panel: " + e.getMessage());
+            logger.severe("Failed to start web panel: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -207,7 +213,7 @@ public class OnlineMonitorPlugin extends JavaPlugin {
                 discordBot.sendNewRecordNotification(currentMaxOnline);
             }
 
-            logger.info("Новый рекорд онлайна: " + currentMaxOnline + " игроков!");
+            logger.info("New online record: " + currentMaxOnline + " players!");
         }
     }
 
