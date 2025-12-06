@@ -15,9 +15,9 @@ import static org.apache.commons.lang3.math.NumberUtils.isParsable;
 
 
 /**
- * API endpoint для получения информации об игроках
- * GET /api/players - топ игроков
- * GET /api/players?name=PlayerName - статистика конкретного игрока
+ * API endpoint for retrieving player information
+ * GET /api/players - top players
+ * GET /api/players?name=PlayerName - specific player statistics
  */
 public class PlayersApiServlet extends HttpServlet {
     private final DatabaseManager database;

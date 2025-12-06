@@ -14,8 +14,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
 
 /**
- * Фасад для работы с базой данных.
- * Делегирует вызовы соответствующим репозиториям.
+ * Facade for database operations.
+ * Delegates calls to appropriate repositories.
  */
 public class DatabaseManager {
     private static final Logger logger = Logger.getLogger("OnlineMonitor");
@@ -142,7 +142,7 @@ public class DatabaseManager {
         return analyticsRepo.getDailyAverages(days);
     }
 
-    public Map<String, Double> getWeekdayAverages(int weeks) {
+    public Map<Integer, Double> getWeekdayAverages(int weeks) {
         return analyticsRepo.getWeekdayAverages(weeks);
     }
 

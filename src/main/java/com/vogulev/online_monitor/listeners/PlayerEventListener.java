@@ -18,7 +18,7 @@ import java.util.logging.Logger;
 import static com.vogulev.online_monitor.i18n.LocalizationManager.getMessage;
 
 /**
- * Обработчик событий входа и выхода игроков
+ * Handler for player join and quit events
  */
 public class PlayerEventListener implements Listener {
     private static final Logger logger = Logger.getLogger("OnlineMonitor");

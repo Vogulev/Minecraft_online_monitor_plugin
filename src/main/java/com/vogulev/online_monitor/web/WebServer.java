@@ -12,8 +12,8 @@ import org.eclipse.jetty.servlet.ServletHolder;
 
 
 /**
- * Веб-сервер на базе Embedded Jetty
- * Предоставляет веб-панель для просмотра статистики онлайна
+ * Web server based on Embedded Jetty
+ * Provides web panel for viewing online statistics
  */
 public class WebServer {
     private static final Logger logger = Logger.getLogger("OnlineMonitor");
@@ -36,11 +36,12 @@ public class WebServer {
 
 
     /**
-     * Запустить веб-сервер
+     * Start the web server
      */
     public void start() {
         try {
             ServerConnector connector = new ServerConnector(server);
+            connector.setHost("0.0.0.0"); // Listen on all interfaces
             connector.setPort(port);
             server.addConnector(connector);
 
@@ -55,18 +56,26 @@ public class WebServer {
             context.addServlet(new ServletHolder(new DashboardServlet()), "/*");
 
             server.start();
-            logger.info("Web panel started at server port: " + port);
+            logger.info("============================================");
+            logger.info("Web panel started successfully!");
+            logger.info("Access it at: http://localhost:" + port);
+            logger.info("Or from network: http://<server-ip>:" + port);
+            logger.info("============================================");
         }
         catch (Exception e)
         {
-            logger.severe("Failed to start web server: " + e.getMessage());
+            logger.severe("============================================");
+            logger.severe("FAILED TO START WEB SERVER!");
+            logger.severe("Error: " + e.getMessage());
+            logger.severe("Port " + port + " might be already in use");
+            logger.severe("============================================");
             e.printStackTrace();
         }
     }
 
 
     /**
-     * Остановить веб-сервер
+     * Stop the web server
      */
     public void stop()
     {
@@ -87,7 +96,7 @@ public class WebServer {
 
 
     /**
-     * Проверить, запущен ли сервер
+     * Check if the server is running
      */
     public boolean isRunning()
     {

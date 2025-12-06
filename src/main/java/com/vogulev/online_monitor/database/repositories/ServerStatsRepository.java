@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
 /**
- * Репозиторий для работы со статистикой сервера (максимальный онлайн, уникальные игроки)
+ * Repository for working with server statistics (maximum online, unique players)
  */
 public class ServerStatsRepository {
     private static final Logger logger = Logger.getLogger("OnlineMonitor");
@@ -26,7 +26,7 @@ public class ServerStatsRepository {
     }
 
     /**
-     * Инициализирует кэш из базы данных
+     * Initializes cache from the database
      */
     private void initializeCache() {
         if (!cacheInitialized) {

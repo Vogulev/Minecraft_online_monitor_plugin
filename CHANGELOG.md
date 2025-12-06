@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.4.5] - 2025-12-06
+
+### Added
+- **Localization System** - Full plugin localization support
+  - New `LocalizationManager` component for managing translations
+  - Support for multiple languages via resource files
+  - Language selection in config.yml (`language: en` or `language: ru`)
+  - Resource files: `messages_en.properties` and `messages_ru.properties`
+  - All plugin messages now support localization:
+    - In-game commands and messages
+    - Discord bot commands and embeds
+    - Scoreboard UI panel
+    - Player join/leave notifications
+    - Web dashboard elements
+
+### Changed
+- Refactored all message handling to use localization system
+- Updated config.yml with language selection option
+- Improved code structure for better maintainability
+- Enhanced Discord bot message formatting with localization
+- Updated plugin.yml with localization improvements
+
+### Configuration
+- Added `language` parameter - select plugin language (default: en)
+  - Available options: `en` (English), `ru` (Russian)
+
+
+
 ## [0.4.0] - 2025-11-30
 
 ### Added

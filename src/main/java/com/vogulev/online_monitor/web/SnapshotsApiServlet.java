@@ -9,14 +9,15 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * API endpoint для получения исторических данных (снапшотов)
- * GET /api/snapshots?type=hourly&days=7 - почасовые средние
- * GET /api/snapshots?type=daily&days=30 - дневные средние
- * GET /api/snapshots?type=weekday&weeks=4 - средние по дням недели
- * GET /api/snapshots?type=peak&days=7 - пиковые часы
+ * API endpoint for retrieving historical data (snapshots)
+ * GET /api/snapshots?type=hourly&days=7 - hourly averages
+ * GET /api/snapshots?type=daily&days=30 - daily averages
+ * GET /api/snapshots?type=weekday&weeks=4 - averages by weekdays
+ * GET /api/snapshots?type=peak&days=7 - peak hours
  */
 public class SnapshotsApiServlet extends HttpServlet {
     private final DatabaseManager database;
@@ -51,7 +52,7 @@ public class SnapshotsApiServlet extends HttpServlet {
                     break;
                 case "weekday":
                     int weeks = getIntParam(req, "weeks", 4);
-                    data = database.getWeekdayAverages(weeks);
+                    data = convertWeekdayMap(database.getWeekdayAverages(weeks));
                     break;
                 case "peak":
                     int peakDays = getIntParam(req, "days", 7);
@@ -84,5 +85,19 @@ public class SnapshotsApiServlet extends HttpServlet {
             }
         }
         return defaultValue;
+    }
+
+    private Map<String, Double> convertWeekdayMap(Map<Integer, Double> weekdayData) {
+        Map<String, Double> result = new LinkedHashMap<>();
+        String[] weekdays = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+
+        for (Map.Entry<Integer, Double> entry : weekdayData.entrySet()) {
+            int dayNum = entry.getKey();
+            if (dayNum >= 0 && dayNum < weekdays.length) {
+                result.put(weekdays[dayNum], entry.getValue());
+            }
+        }
+
+        return result;
     }
 }

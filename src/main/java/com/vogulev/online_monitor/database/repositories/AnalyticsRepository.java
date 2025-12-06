@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 /**
- * Репозиторий для временной аналитики онлайна
+ * Repository for time-based online analytics
  */
 public class AnalyticsRepository {
 
@@ -90,20 +90,11 @@ public class AnalyticsRepository {
         return dailyAvg;
     }
 
-    public Map<String, Double> getWeekdayAverages(int weeks) {
-        Map<String, Double> weekdayAvg = new LinkedHashMap<>();
+    public Map<Integer, Double> getWeekdayAverages(int weeks) {
+        Map<Integer, Double> weekdayAvg = new LinkedHashMap<>();
         String sql = """
             SELECT
-                CASE CAST(strftime('%w', timestamp) AS INTEGER)
-                    WHEN 0 THEN 'Воскресенье'
-                    WHEN 1 THEN 'Понедельник'
-                    WHEN 2 THEN 'Вторник'
-                    WHEN 3 THEN 'Среда'
-                    WHEN 4 THEN 'Четверг'
-                    WHEN 5 THEN 'Пятница'
-                    WHEN 6 THEN 'Суббота'
-                END as weekday,
-                strftime('%w', timestamp) as weekday_num,
+                CAST(strftime('%w', timestamp) AS INTEGER) as weekday_num,
                 AVG(online_count) as avg_online
             FROM online_snapshots
             WHERE timestamp >= datetime('now', '-' || ? || ' weeks')
@@ -117,9 +108,9 @@ public class AnalyticsRepository {
             ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
-                String weekday = rs.getString("weekday");
+                int weekdayNum = rs.getInt("weekday_num");
                 double avg = rs.getDouble(AVG_ONLINE);
-                weekdayAvg.put(weekday, avg);
+                weekdayAvg.put(weekdayNum, avg);
             }
         } catch (SQLException e) {
             logger.severe("Error getting weekday averages: " + e.getMessage());

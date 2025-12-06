@@ -217,7 +217,7 @@ public class DiscordBot extends ListenerAdapter {
 
         event.getHook().sendMessageEmbeds(embed.build()).queue();
     }
-    // === Методы для отправки уведомлений ===
+    // === Methods for sending notifications ===
 
     public void sendPlayerJoinNotification(String playerName, int currentOnline, boolean isNewPlayer) {
         if (jda == null || channelId == null || channelId.isEmpty()) return;
@@ -236,7 +236,10 @@ public class DiscordBot extends ListenerAdapter {
                           getMessage("discord.notification.online.value", currentOnline), false)
                 .setTimestamp(java.time.Instant.now());
 
-        channel.sendMessageEmbeds(embed.build()).queue();
+        channel.sendMessageEmbeds(embed.build()).queue(
+            success -> {},
+            error -> logger.warning("Failed to send join notification: " + error.getMessage())
+        );
     }
 
     public void sendPlayerQuitNotification(String playerName, int currentOnline, long sessionMinutes) {
@@ -254,7 +257,10 @@ public class DiscordBot extends ListenerAdapter {
                           getMessage("discord.notification.playtime.value", sessionMinutes), false)
                 .setTimestamp(java.time.Instant.now());
 
-        channel.sendMessageEmbeds(embed.build()).queue();
+        channel.sendMessageEmbeds(embed.build()).queue(
+            success -> {},
+            error -> logger.warning("Failed to send quit notification: " + error.getMessage())
+        );
     }
 
     public void sendNewRecordNotification(int newRecord) {
@@ -269,7 +275,10 @@ public class DiscordBot extends ListenerAdapter {
                 .setDescription(getMessage("discord.notification.record.message", newRecord))
                 .setTimestamp(java.time.Instant.now());
 
-        channel.sendMessageEmbeds(embed.build()).queue();
+        channel.sendMessageEmbeds(embed.build()).queue(
+            success -> {},
+            error -> logger.warning("Failed to send record notification: " + error.getMessage())
+        );
     }
 
     public void sendServerStartNotification() {
@@ -284,7 +293,10 @@ public class DiscordBot extends ListenerAdapter {
                 .setDescription(getMessage("discord.notification.server.start.message"))
                 .setTimestamp(java.time.Instant.now());
 
-        channel.sendMessageEmbeds(embed.build()).queue();
+        channel.sendMessageEmbeds(embed.build()).queue(
+            success -> {},
+            error -> logger.warning("Failed to send server start notification: " + error.getMessage())
+        );
     }
 
     public void sendServerStopNotification() {

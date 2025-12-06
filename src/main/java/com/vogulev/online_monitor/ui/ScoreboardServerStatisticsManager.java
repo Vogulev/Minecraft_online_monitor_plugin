@@ -18,7 +18,7 @@ import static com.vogulev.online_monitor.i18n.LocalizationManager.getMessage;
 
 
 /**
- * Управление scoreboard для отображения статистики онлайна
+ * Manages scoreboard for displaying online statistics
  */
 public class ScoreboardServerStatisticsManager
 {

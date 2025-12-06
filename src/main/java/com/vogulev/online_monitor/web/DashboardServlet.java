@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
- * Главная страница веб-панели с графиками и статистикой
+ * Main page of the web panel with charts and statistics
  */
 public class DashboardServlet extends HttpServlet {
     private static final Logger logger = Logger.getLogger("OnlineMonitor");
@@ -36,8 +36,8 @@ public class DashboardServlet extends HttpServlet {
     }
 
     /**
-     * Загружает HTML страницу из resources
-     * Кэширует результат для повышения производительности
+     * Loads HTML page from resources
+     * Caches the result for improved performance
      */
     private String getHtmlPage() {
         if (cachedHtml != null) {
@@ -64,7 +64,7 @@ public class DashboardServlet extends HttpServlet {
     }
 
     /**
-     * Очистить кэш HTML (полезно для разработки)
+     * Clear HTML cache (useful for development)
      */
     public void clearCache() {
         cachedHtml = null;

@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * API endpoint для получения общей статистики сервера
+ * API endpoint for retrieving general server statistics
  * GET /api/stats
  */
 public class StatsApiServlet extends HttpServlet {

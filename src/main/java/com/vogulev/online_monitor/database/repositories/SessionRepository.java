@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.util.logging.Logger;
 
 /**
- * Репозиторий для работы с сессиями игроков
+ * Repository for working with player sessions
  */
 public class SessionRepository {
     private static final Logger logger = Logger.getLogger("OnlineMonitor");
@@ -32,7 +32,7 @@ public class SessionRepository {
 
     public void closeSession(String playerName, long sessionDuration) {
         try (Connection conn = connectionManager.getConnection()) {
-            // Находим активную сессию
+            // Find active session
             String findSessionSql = "SELECT id FROM player_sessions " +
                     "WHERE player_name = ? AND quit_time IS NULL " +
                     "ORDER BY join_time DESC LIMIT 1";
@@ -47,7 +47,7 @@ public class SessionRepository {
             }
 
             if (sessionId != -1) {
-                // Обновляем сессию
+                // Update session
                 String updateSql = "UPDATE player_sessions " +
                         "SET quit_time = " + connectionManager.getCurrentTimestamp() + ", " +
                         "session_duration = ? " +

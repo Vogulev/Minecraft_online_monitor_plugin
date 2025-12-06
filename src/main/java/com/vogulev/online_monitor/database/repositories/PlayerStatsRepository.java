@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 /**
- * Репозиторий для работы со статистикой игроков
+ * Repository for working with player statistics
  */
 public class PlayerStatsRepository {
     private static final Logger logger = Logger.getLogger("OnlineMonitor");

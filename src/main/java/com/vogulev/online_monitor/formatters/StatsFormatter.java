@@ -9,7 +9,7 @@ import java.util.Map;
 import static com.vogulev.online_monitor.i18n.LocalizationManager.getMessage;
 
 /**
- * Форматирование и отправка статистических сообщений игрокам
+ * Formatting and sending statistical messages to players
  */
 public class StatsFormatter {
 
@@ -28,13 +28,13 @@ public class StatsFormatter {
 
         String barColor;
         if (percentage >= 75) {
-            barColor = "&a"; // Зеленый - высокая активность
+            barColor = "&a"; // Green - high activity
         } else if (percentage >= 50) {
-            barColor = "&e"; // Желтый - средняя активность
+            barColor = "&e"; // Yellow - medium activity
         } else if (percentage >= 25) {
-            barColor = "&6"; // Оранжевый - низкая активность
+            barColor = "&6"; // Orange - low activity
         } else {
-            barColor = "&c"; // Красный - очень низкая активность
+            barColor = "&c"; // Red - very low activity
         }
 
         StringBuilder bar = new StringBuilder("§8[");
@@ -82,16 +82,17 @@ public class StatsFormatter {
         }
     }
 
-    public static void sendWeekdayStats(CommandSender sender, Map<String, Double> weekdayAvg, int weeks) {
+    public static void sendWeekdayStats(CommandSender sender, Map<Integer, Double> weekdayAvg, int weeks) {
         if (weekdayAvg.isEmpty()) {
             sendColoredMessage(sender, getMessage("analytics.insufficient_data"));
             return;
         }
 
         sendColoredMessage(sender, getMessage("analytics.weekday.header", weeks));
-        for (Map.Entry<String, Double> entry : weekdayAvg.entrySet()) {
+        for (Map.Entry<Integer, Double> entry : weekdayAvg.entrySet()) {
+            String weekdayName = getMessage("weekday." + entry.getKey());
             String bar = createBar(entry.getValue(), getMaxValue(weekdayAvg.values()));
-            sendColoredMessage(sender, "§b" + String.format("%-12s", entry.getKey()) + " §7" + bar + " §a" + String.format("%.1f", entry.getValue()));
+            sendColoredMessage(sender, "§b" + String.format("%-12s", weekdayName) + " §7" + bar + " §a" + String.format("%.1f", entry.getValue()));
         }
     }
 

@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * API endpoint для получения информации о текущем онлайне
+ * API endpoint for retrieving current online information
  * GET /api/online
  */
 public class OnlineApiServlet extends HttpServlet {

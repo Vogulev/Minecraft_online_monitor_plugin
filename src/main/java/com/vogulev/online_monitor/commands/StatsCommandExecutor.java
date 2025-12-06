@@ -20,7 +20,7 @@ import static com.vogulev.online_monitor.i18n.LocalizationManager.getMessage;
 
 
 /**
- * Обработчик команд /online
+ * Handler for /online commands
  */
 public class StatsCommandExecutor implements CommandExecutor, TabCompleter {
     private final DatabaseManager database;

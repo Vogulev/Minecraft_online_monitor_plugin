@@ -4,7 +4,7 @@ import com.vogulev.online_monitor.DatabaseManager;
 import org.bukkit.Server;
 
 /**
- * Периодическая задача для записи снимков онлайна
+ * Periodic task for recording online snapshots
  */
 public class SnapshotTask implements Runnable {
     private final DatabaseManager database;

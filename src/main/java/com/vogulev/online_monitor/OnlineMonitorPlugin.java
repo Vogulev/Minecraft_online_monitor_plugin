@@ -16,8 +16,8 @@ import java.util.logging.Logger;
 import static com.vogulev.online_monitor.i18n.LocalizationManager.initialize;
 
 /**
- * Главный класс плагина OnlineMonitor
- * Отвечает только за lifecycle и координацию компонентов
+ * Main class of OnlineMonitor plugin
+ * Responsible only for lifecycle and component coordination
  */
 public class OnlineMonitorPlugin extends JavaPlugin {
     private static final Logger logger = Logger.getLogger("OnlineMonitor");
@@ -119,7 +119,7 @@ public class OnlineMonitorPlugin extends JavaPlugin {
     }
 
     private void scheduleTasks() {
-        long snapshotInterval = getConfig().getLong("snapshot-interval-minutes", 5) * 60 * 20; // В тиках
+        long snapshotInterval = getConfig().getLong("snapshot-interval-minutes", 5) * 60 * 20; // In ticks
         getServer().getScheduler().runTaskTimer(
                 this,
                 new SnapshotTask(database, getServer()),

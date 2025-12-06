@@ -1,31 +1,31 @@
 name: OnlineMonitor
-version: 0.4.0
+version: 0.4.5
 main: com.vogulev.online_monitor.OnlineMonitorPlugin
 api-version: "1.20"
 author: Vogulev
-description: Продвинутая система мониторинга онлайна с детальной статистикой
+description: Advanced online monitoring system with detailed statistics
 
 commands:
   online:
-    description: Показывает статистику онлайна
+    description: Shows online statistics
     usage: /<command> [stats|top|player|help]
 
 permissions:
   onlinemonitor.*:
-    description: Все права плагина
+    description: All plugin permissions
     children:
       onlinemonitor.basic: true
       onlinemonitor.stats: true
       onlinemonitor.admin: true
 
   onlinemonitor.basic:
-    description: Базовая команда /online
+    description: Basic /online command
     default: true
 
   onlinemonitor.stats:
-    description: Доступ к расширенной статистике
+    description: Access to extended statistics
     default: true
 
   onlinemonitor.admin:
-    description: Админские права
+    description: Admin permissions
     default: op

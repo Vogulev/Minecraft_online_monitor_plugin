@@ -10,7 +10,7 @@ import java.sql.Statement;
 import java.util.logging.Logger;
 
 /**
- * Управление подключением к базе данных через HikariCP пул соединений
+ * Database connection management through HikariCP connection pool
  */
 public class ConnectionManager {
 

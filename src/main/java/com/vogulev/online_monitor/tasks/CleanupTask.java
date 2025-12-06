@@ -3,7 +3,7 @@ package com.vogulev.online_monitor.tasks;
 import com.vogulev.online_monitor.DatabaseManager;
 
 /**
- * Периодическая задача для очистки старых снимков онлайна
+ * Periodic task for cleaning up old online snapshots
  */
 public class CleanupTask implements Runnable {
     private final DatabaseManager database;

@@ -1,27 +1,28 @@
-# Конфигурация OnlineMonitor плагина
+# OnlineMonitor Plugin Configuration
 
-# Язык плагина (language)
-# Доступные языки: en (English), ru (Русский)
+# Plugin language
 # Available languages: en (English), ru (Russian)
 language: en
 
-# Сообщение при входе игрока
-# Доступные плейсхолдеры: %player%, %online%
-# Доступные цветовые коды: &0-&9, &a-&f (используйте & для цветов)
-# Примеры цветов: &a = зелёный, &e = жёлтый, &6 = золотой, &c = красный
-# Пример: "&6Добро пожаловать, &e%player%&6! Онлайн: &a%online%"
-welcome-message: "Добро пожаловать на сервер, %player%!"
+# Player join message
+# By default, automatic localization is used based on the 'language' setting
+# If you need a custom message, uncomment and edit the line below:
+# Available placeholders: %player%, %online%
+# Available color codes: &0-&9, &a-&f (use & for colors)
+# Color examples: &a = green, &e = yellow, &6 = gold, &c = red
+# Example: "&6Welcome, &e%player%&6! Online: &a%online%"
+# welcome-message: "Welcome to the server, %player%!"
 
-# Настройки логирования
+# Logging settings
 log-unique-joins: true
 log-join-quit: true
 
-# Настройки базы данных
+# Database settings
 database:
-  # Тип базы данных: sqlite или mysql
+  # Database type: sqlite or mysql
   type: sqlite
 
-  # Настройки для MySQL (игнорируются если type: sqlite)
+  # MySQL settings (ignored if type: sqlite)
   mysql:
     host: localhost
     port: 3306
@@ -29,54 +30,54 @@ database:
     username: root
     password: password
 
-# Настройки временной аналитики
-# Интервал записи снимков онлайна (в минутах)
+# Time analytics settings
+# Interval for recording online snapshots (in minutes)
 snapshot-interval-minutes: 5
-# Сколько дней хранить снимки (старые автоматически удаляются)
+# How many days to keep snapshots (old ones are automatically deleted)
 snapshot-days-to-keep: 30
 
-# Часовой пояс для записи времени в БД
-# Формат: смещение в часах от UTC (для МСК = +3)
+# Timezone for recording time in DB
+# Format: offset in hours from UTC (for MSK = +3)
 timezone-offset: +3
 
-# Discord интеграция
+# Discord integration
 discord:
-  # Включить Discord бота (true/false)
+  # Enable Discord bot (true/false)
   enabled: true
 
-  # Токен Discord бота (получить на https://discord.com/developers/applications)
+  # Discord bot token (get it at https://discord.com/developers/applications)
   bot-token: "YOUR_BOT_TOKEN_HERE"
 
-  # ID канала для уведомлений (ПКМ на канале -> Копировать ID)
+  # Channel ID for notifications (Right-click on channel -> Copy ID)
   channel-id: "YOUR_CHANNEL_ID_HERE"
 
-  # Настройки уведомлений
+  # Notification settings
   notifications:
-    # Уведомления о входе/выходе игроков
+    # Player join/quit notifications
     player-join: true
     player-quit: true
-    # Уведомлять о новых игроках
+    # Notify about new players
     new-player: true
-    # Уведомлять о новых рекордах онлайна
+    # Notify about new online records
     new-record: true
-    # Уведомления о запуске/остановке сервера
+    # Server start/stop notifications
     server-start: true
     server-stop: true
 
-# Веб-панель (Web Dashboard)
+# Web Dashboard
 web-panel:
-  # Включить веб-панель (true/false)
+  # Enable web panel (true/false)
   enabled: true
 
-  # Порт для веб-панели (по умолчанию 8080)
-  # Убедитесь, что порт не занят другим приложением
+  # Port for web panel (default 8080)
+  # Make sure the port is not occupied by another application
   port: 8080
 
-# UI Scoreboard (постоянная панель статистики на экране)
+# UI Scoreboard (permanent statistics panel on screen)
 scoreboard:
-  # Включить UI панель статистики (true/false)
+  # Enable UI statistics panel (true/false)
   enabled: true
 
-  # Интервал обновления scoreboard (в секундах)
-  # Рекомендуется: 1-5 секунд
+  # Scoreboard update interval (in seconds)
+  # Recommended: 1-5 seconds
   update-interval-seconds: 1

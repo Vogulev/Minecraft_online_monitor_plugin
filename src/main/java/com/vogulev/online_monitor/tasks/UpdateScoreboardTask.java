@@ -3,7 +3,7 @@ package com.vogulev.online_monitor.tasks;
 import com.vogulev.online_monitor.ui.ScoreboardServerStatisticsManager;
 
 /**
- * Задача для автоматического обновления scoreboard
+ * Task for automatic scoreboard updates
  */
 public class UpdateScoreboardTask implements Runnable {
     private final ScoreboardServerStatisticsManager scoreboardServerStatisticsManager;
