@@ -20,15 +20,48 @@ log-join-quit: true
 # Database settings
 database:
   # Database type: sqlite or mysql
+  # This is used to auto-build jdbcUrl if not specified in hikari section
   type: sqlite
 
-  # MySQL settings (ignored if type: sqlite)
+  # SQLite settings (used when type: sqlite for auto-building jdbcUrl)
+  sqlite:
+    # Database file name (will be created in plugin folder)
+    filename: statistics.db
+
+  # MySQL settings (used when type: mysql for auto-building jdbcUrl)
   mysql:
     host: localhost
     port: 3306
     database: minecraft_stats
+    # MySQL server timezone setting
+    timezone: UTC
+
+  # HikariCP Connection Pool settings
+  # All settings here are automatically passed to HikariCP
+  # You can add any HikariCP property here: https://github.com/brettwooldridge/HikariCP#configuration-knobs-baby
+  hikari:
+    # Database credentials
     username: root
     password: password
+
+    # Driver class (auto-selected based on type if not specified)
+    # driverClassName: com.mysql.cj.jdbc.Driver
+
+    # JDBC URL (auto-built based on type if not specified)
+    # You can override it here for full control:
+    # jdbcUrl: jdbc:mysql://localhost:3306/minecraft_stats?useSSL=false&serverTimezone=UTC
+
+    # Connection pool settings
+    maximumPoolSize: 10
+    minimumIdle: 2
+    connectionTimeout: 30000
+    idleTimeout: 600000
+    maxLifetime: 1800000
+
+    # Additional HikariCP settings (optional):
+    # connectionTestQuery: SELECT 1
+    # leakDetectionThreshold: 0
+    # poolName: OnlineMonitorPool
 
 # Time analytics settings
 # Interval for recording online snapshots (in minutes)
@@ -39,6 +72,12 @@ snapshot-days-to-keep: 30
 # Timezone for recording time in DB
 # Format: offset in hours from UTC (for MSK = +3)
 timezone-offset: +3
+
+# AFK Detection Settings
+# Time in minutes after which a player is considered AFK (inactive)
+# The player must not move, chat, break/place blocks, or perform any actions
+# Default: 5 minutes
+afk-threshold-minutes: 5
 
 # Discord integration
 discord:

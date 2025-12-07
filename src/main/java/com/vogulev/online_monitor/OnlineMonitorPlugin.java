@@ -2,6 +2,7 @@ package com.vogulev.online_monitor;
 
 import com.vogulev.online_monitor.commands.StatsCommandExecutor;
 import com.vogulev.online_monitor.listeners.PlayerEventListener;
+import com.vogulev.online_monitor.listeners.PlayerStatisticsListener;
 import com.vogulev.online_monitor.tasks.CleanupTask;
 import com.vogulev.online_monitor.tasks.SnapshotTask;
 import com.vogulev.online_monitor.tasks.UpdateScoreboardTask;
@@ -25,6 +26,7 @@ public class OnlineMonitorPlugin extends JavaPlugin {
     private DiscordBot discordBot;
     private WebServer webServer;
     private ScoreboardServerStatisticsManager scoreboardServerStatisticsManager;
+    private AFKManager afkManager;
     private final Map<String, Long> playerJoinTimes = new HashMap<>();
     private int lastMaxOnline = 0;
 
@@ -32,12 +34,10 @@ public class OnlineMonitorPlugin extends JavaPlugin {
     public void onEnable() {
         saveDefaultConfig();
 
-        // Initialize localization
         String language = getConfig().getString("language", "en");
         initialize(language);
 
         database = new DatabaseManager(getDataFolder());
-        database.setPlugin(this);
 
         try {
             initializeDatabase();
@@ -49,6 +49,10 @@ public class OnlineMonitorPlugin extends JavaPlugin {
         }
 
         lastMaxOnline = database.getMaxOnline();
+
+        int afkThresholdMinutes = getConfig().getInt("afk-threshold-minutes", 5);
+        afkManager = new AFKManager(afkThresholdMinutes);
+        logger.info("AFK detection threshold set to " + afkThresholdMinutes + " minutes");
 
         boolean scoreboardEnabled = getConfig().getBoolean("scoreboard.enabled", true);
         scoreboardServerStatisticsManager = new ScoreboardServerStatisticsManager(database, scoreboardEnabled);
@@ -64,6 +68,10 @@ public class OnlineMonitorPlugin extends JavaPlugin {
         );
         playerListener.setScoreboardManager(scoreboardServerStatisticsManager);
         getServer().getPluginManager().registerEvents(playerListener, this);
+
+        PlayerStatisticsListener statsListener = new PlayerStatisticsListener(database, afkManager);
+        getServer().getPluginManager().registerEvents(statsListener, this);
+        logger.info("Extended statistics tracking enabled");
 
         StatsCommandExecutor statsCommand = new StatsCommandExecutor(database, getServer(), playerJoinTimes,
                 scoreboardServerStatisticsManager);
@@ -108,14 +116,7 @@ public class OnlineMonitorPlugin extends JavaPlugin {
         String timezoneOffset = getConfig().getString("timezone-offset", "+3");
         database.setTimezoneOffset(timezoneOffset);
 
-        String dbType = getConfig().getString("database.type", "sqlite");
-        String host = getConfig().getString("database.mysql.host", "localhost");
-        int port = getConfig().getInt("database.mysql.port", 3306);
-        String dbName = getConfig().getString("database.mysql.database", "minecraft_stats");
-        String username = getConfig().getString("database.mysql.username", "root");
-        String password = getConfig().getString("database.mysql.password", "password");
-
-        database.connect(dbType, host, port, dbName, username, password);
+        database.connect(getConfig());
     }
 
     private void scheduleTasks() {
@@ -219,5 +220,9 @@ public class OnlineMonitorPlugin extends JavaPlugin {
 
     public DatabaseManager getDatabase() {
         return database;
+    }
+
+    public AFKManager getAFKManager() {
+        return afkManager;
     }
 }

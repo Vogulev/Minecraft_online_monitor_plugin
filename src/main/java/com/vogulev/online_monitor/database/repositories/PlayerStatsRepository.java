@@ -111,4 +111,173 @@ public class PlayerStatsRepository {
         }
         return 0;
     }
+
+    // Extended statistics methods
+
+    public void incrementDeaths(String playerName) {
+        String sql = "UPDATE player_stats SET deaths = deaths + 1 WHERE player_name = ?";
+        try (Connection conn = connectionManager.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, playerName);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            logger.severe("Error incrementing deaths: " + e.getMessage());
+        }
+    }
+
+    public void incrementMobKills(String playerName) {
+        String sql = "UPDATE player_stats SET mob_kills = mob_kills + 1 WHERE player_name = ?";
+        try (Connection conn = connectionManager.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, playerName);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            logger.severe("Error incrementing mob kills: " + e.getMessage());
+        }
+    }
+
+    public void incrementPlayerKills(String playerName) {
+        String sql = "UPDATE player_stats SET player_kills = player_kills + 1 WHERE player_name = ?";
+        try (Connection conn = connectionManager.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, playerName);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            logger.severe("Error incrementing player kills: " + e.getMessage());
+        }
+    }
+
+    public void incrementBlocksBroken(String playerName) {
+        String sql = "UPDATE player_stats SET blocks_broken = blocks_broken + 1 WHERE player_name = ?";
+        try (Connection conn = connectionManager.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, playerName);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            logger.severe("Error incrementing blocks broken: " + e.getMessage());
+        }
+    }
+
+    public void incrementBlocksPlaced(String playerName) {
+        String sql = "UPDATE player_stats SET blocks_placed = blocks_placed + 1 WHERE player_name = ?";
+        try (Connection conn = connectionManager.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, playerName);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            logger.severe("Error incrementing blocks placed: " + e.getMessage());
+        }
+    }
+
+    public void incrementMessagesSent(String playerName) {
+        String sql = "UPDATE player_stats SET messages_sent = messages_sent + 1 WHERE player_name = ?";
+        try (Connection conn = connectionManager.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, playerName);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            logger.severe("Error incrementing messages sent: " + e.getMessage());
+        }
+    }
+
+    public void updateLastActivity(String playerName) {
+        String sql = "UPDATE player_stats SET last_activity = " + connectionManager.getCurrentTimestamp() + " WHERE player_name = ?";
+        try (Connection conn = connectionManager.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, playerName);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            logger.severe("Error updating last activity: " + e.getMessage());
+        }
+    }
+
+    public int getPlayerDeaths(String playerName) {
+        String sql = "SELECT deaths FROM player_stats WHERE player_name = ?";
+        try (Connection conn = connectionManager.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, playerName);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("deaths");
+            }
+        } catch (SQLException e) {
+            logger.severe("Error getting player deaths: " + e.getMessage());
+        }
+        return 0;
+    }
+
+    public int getPlayerMobKills(String playerName) {
+        String sql = "SELECT mob_kills FROM player_stats WHERE player_name = ?";
+        try (Connection conn = connectionManager.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, playerName);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("mob_kills");
+            }
+        } catch (SQLException e) {
+            logger.severe("Error getting player mob kills: " + e.getMessage());
+        }
+        return 0;
+    }
+
+    public int getPlayerPlayerKills(String playerName) {
+        String sql = "SELECT player_kills FROM player_stats WHERE player_name = ?";
+        try (Connection conn = connectionManager.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, playerName);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("player_kills");
+            }
+        } catch (SQLException e) {
+            logger.severe("Error getting player kills: " + e.getMessage());
+        }
+        return 0;
+    }
+
+    public int getPlayerBlocksBroken(String playerName) {
+        String sql = "SELECT blocks_broken FROM player_stats WHERE player_name = ?";
+        try (Connection conn = connectionManager.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, playerName);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("blocks_broken");
+            }
+        } catch (SQLException e) {
+            logger.severe("Error getting player blocks broken: " + e.getMessage());
+        }
+        return 0;
+    }
+
+    public int getPlayerBlocksPlaced(String playerName) {
+        String sql = "SELECT blocks_placed FROM player_stats WHERE player_name = ?";
+        try (Connection conn = connectionManager.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, playerName);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("blocks_placed");
+            }
+        } catch (SQLException e) {
+            logger.severe("Error getting player blocks placed: " + e.getMessage());
+        }
+        return 0;
+    }
+
+    public int getPlayerMessagesSent(String playerName) {
+        String sql = "SELECT messages_sent FROM player_stats WHERE player_name = ?";
+        try (Connection conn = connectionManager.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, playerName);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("messages_sent");
+            }
+        } catch (SQLException e) {
+            logger.severe("Error getting player messages sent: " + e.getMessage());
+        }
+        return 0;
+    }
 }

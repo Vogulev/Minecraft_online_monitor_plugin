@@ -1,5 +1,63 @@
 # Changelog
 
+## [0.5.0] - 2025-12-07
+
+### Added
+- **Extended Player Statistics** - Comprehensive tracking of player activities
+  - ☠️ Deaths tracking - total player deaths count
+  - ⚔️ Mob kills tracking - total killed mobs count
+  - 🗡️ Player kills tracking - PvP kills count
+  - ⛏️ Blocks broken tracking - total broken blocks count
+  - 🧱 Blocks placed tracking - total placed blocks count
+  - 💬 Messages sent tracking - total chat messages count
+  - 🕐 Last activity timestamp - for AFK detection
+
+- **AFK Detection System** - Automatic inactive player detection
+  - New `AFKManager` component for tracking player activity
+  - Configurable AFK threshold (default: 5 minutes)
+  - Automatic activity updates on player actions (movement, chat, block interaction)
+  - API methods to check AFK status and get AFK player list
+  - Real-time activity tracking in memory
+
+- **Event Listeners** - New `PlayerStatisticsListener` for comprehensive event tracking
+  - `PlayerDeathEvent` - tracks player deaths
+  - `EntityDeathEvent` - tracks mob and player kills
+  - `BlockBreakEvent` - tracks broken blocks
+  - `BlockPlaceEvent` - tracks placed blocks
+  - `AsyncPlayerChatEvent` - tracks chat messages
+  - `PlayerMoveEvent` - updates AFK status on movement
+
+- **Database Schema Extensions**
+  - Automatic schema migration for existing databases
+  - New columns in `player_stats` table:
+    - `deaths` (INTEGER) - death count
+    - `mob_kills` (INTEGER) - mob kill count
+    - `player_kills` (INTEGER) - player kill count
+    - `blocks_broken` (INTEGER) - broken blocks count
+    - `blocks_placed` (INTEGER) - placed blocks count
+    - `messages_sent` (INTEGER) - messages count
+    - `last_activity` (TIMESTAMP) - last activity time
+  - Safe migration without data loss
+
+### Changed
+- Enhanced `/online player` command to display extended statistics
+  - Added "Extended Statistics" section with all new metrics
+  - Better organized output with visual separators
+- Updated `PlayerStatsRepository` with new methods for extended statistics
+- Updated `DatabaseManager` with delegating methods for new features
+- Improved localization files with new message keys (EN/RU)
+
+### Configuration
+- Added `afk-threshold-minutes` parameter - AFK detection threshold in minutes (default: 5)
+  - Players inactive for this duration will be marked as AFK
+  - Configurable based on server preferences
+
+### Technical Improvements
+- Asynchronous database operations for all new statistics
+- Optimized event handling with priority monitoring
+- Clean separation of concerns with new manager classes
+- Thread-safe AFK tracking with concurrent data structures
+
 ## [0.4.5] - 2025-12-06
 
 ### Added

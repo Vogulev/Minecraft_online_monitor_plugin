@@ -6,7 +6,13 @@ A powerful plugin for tracking player statistics on your Minecraft server with f
 
 ### Core Functions:
 - Real-time online tracking
+- **Extended Player Statistics** - Comprehensive activity tracking:
+  - ☠️ Deaths, ⚔️ Mob kills, 🗡️ Player kills (PvP)
+  - ⛏️ Blocks broken, 🧱 Blocks placed
+  - 💬 Chat messages sent
+  - 🕐 Last activity timestamp
 - Player statistics (logins, playtime)
+- **AFK Detection** - Automatic inactive player detection (configurable threshold)
 - Historical online data recording (snapshots every 5 minutes)
 - SQLite and MySQL database support
 - Detailed analytics by hours, days, and weekdays

@@ -20,7 +20,6 @@ import java.util.logging.Logger;
 public class DatabaseManager {
     private static final Logger logger = Logger.getLogger("OnlineMonitor");
     private final File dataFolder;
-    private Plugin plugin;
 
     private ConnectionManager connectionManager;
     private ServerStatsRepository serverStatsRepo;
@@ -32,19 +31,15 @@ public class DatabaseManager {
         this.dataFolder = dataFolder;
     }
 
-    public void setPlugin(Plugin plugin) {
-        this.plugin = plugin;
-    }
-
     public void setTimezoneOffset(String offset) {
         if (connectionManager != null) {
             connectionManager.setTimezoneOffset(offset);
         }
     }
 
-    public void connect(String type, String host, int port, String database, String username, String password) throws SQLException {
+    public void connect(org.bukkit.configuration.file.FileConfiguration config) throws SQLException {
         connectionManager = new ConnectionManager();
-        connectionManager.connect(type, host, port, database, username, password, dataFolder);
+        connectionManager.connect(config, dataFolder);
 
         serverStatsRepo = new ServerStatsRepository(connectionManager);
         playerStatsRepo = new PlayerStatsRepository(connectionManager);
@@ -152,5 +147,59 @@ public class DatabaseManager {
 
     public void cleanOldSnapshots(int daysToKeep) {
         analyticsRepo.cleanOldSnapshots(daysToKeep);
+    }
+
+    // === Extended Statistics Methods ===
+
+    public void incrementDeaths(String playerName) {
+        runAsync(() -> playerStatsRepo.incrementDeaths(playerName));
+    }
+
+    public void incrementMobKills(String playerName) {
+        runAsync(() -> playerStatsRepo.incrementMobKills(playerName));
+    }
+
+    public void incrementPlayerKills(String playerName) {
+        runAsync(() -> playerStatsRepo.incrementPlayerKills(playerName));
+    }
+
+    public void incrementBlocksBroken(String playerName) {
+        runAsync(() -> playerStatsRepo.incrementBlocksBroken(playerName));
+    }
+
+    public void incrementBlocksPlaced(String playerName) {
+        runAsync(() -> playerStatsRepo.incrementBlocksPlaced(playerName));
+    }
+
+    public void incrementMessagesSent(String playerName) {
+        runAsync(() -> playerStatsRepo.incrementMessagesSent(playerName));
+    }
+
+    public void updateLastActivity(String playerName) {
+        runAsync(() -> playerStatsRepo.updateLastActivity(playerName));
+    }
+
+    public int getPlayerDeaths(String playerName) {
+        return playerStatsRepo.getPlayerDeaths(playerName);
+    }
+
+    public int getPlayerMobKills(String playerName) {
+        return playerStatsRepo.getPlayerMobKills(playerName);
+    }
+
+    public int getPlayerPlayerKills(String playerName) {
+        return playerStatsRepo.getPlayerPlayerKills(playerName);
+    }
+
+    public int getPlayerBlocksBroken(String playerName) {
+        return playerStatsRepo.getPlayerBlocksBroken(playerName);
+    }
+
+    public int getPlayerBlocksPlaced(String playerName) {
+        return playerStatsRepo.getPlayerBlocksPlaced(playerName);
+    }
+
+    public int getPlayerMessagesSent(String playerName) {
+        return playerStatsRepo.getPlayerMessagesSent(playerName);
     }
 }
