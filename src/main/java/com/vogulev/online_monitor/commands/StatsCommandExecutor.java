@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import static com.vogulev.online_monitor.formatters.StatsFormatter.sendColoredMessage;
 import static com.vogulev.online_monitor.i18n.LocalizationManager.getMessage;
 
 
@@ -54,7 +55,7 @@ public class StatsCommandExecutor implements CommandExecutor, TabCompleter {
                 if (args.length > 1) {
                     sendPlayerStats(sender, args[1]);
                 } else {
-                    StatsFormatter.sendColoredMessage(sender, getMessage("command.usage.player"));
+                    sendColoredMessage(sender, getMessage("command.usage.player"));
                 }
                 break;
             case "hourly":
@@ -77,8 +78,8 @@ public class StatsCommandExecutor implements CommandExecutor, TabCompleter {
                 toggleUI(sender);
                 break;
             default:
-                StatsFormatter.sendColoredMessage(sender, getMessage("command.unknown"));
-                StatsFormatter.sendColoredMessage(sender, getMessage("command.usage"));
+                sendColoredMessage(sender, getMessage("command.unknown"));
+                sendColoredMessage(sender, getMessage("command.usage"));
         }
         return true;
     }
@@ -106,11 +107,11 @@ public class StatsCommandExecutor implements CommandExecutor, TabCompleter {
         int maxOnline = database.getMaxOnline();
         int uniquePlayers = database.getUniquePlayersCount();
 
-        StatsFormatter.sendColoredMessage(sender, getMessage("command.stats.header"));
-        StatsFormatter.sendColoredMessage(sender, getMessage("command.stats.current", currentOnline));
-        StatsFormatter.sendColoredMessage(sender, getMessage("command.stats.max", maxOnline));
-        StatsFormatter.sendColoredMessage(sender, getMessage("command.stats.unique", uniquePlayers));
-        StatsFormatter.sendColoredMessage(sender, getMessage("command.stats.hint"));
+        sendColoredMessage(sender, getMessage("command.stats.header"));
+        sendColoredMessage(sender, getMessage("command.stats.current", currentOnline));
+        sendColoredMessage(sender, getMessage("command.stats.max", maxOnline));
+        sendColoredMessage(sender, getMessage("command.stats.unique", uniquePlayers));
+        sendColoredMessage(sender, getMessage("command.stats.hint"));
     }
 
     private void sendDetailedStats(CommandSender sender) {
@@ -122,36 +123,36 @@ public class StatsCommandExecutor implements CommandExecutor, TabCompleter {
         long totalPlaytime = database.getTotalPlaytime();
         long averageMinutes = uniquePlayers > 0 ? (totalPlaytime / uniquePlayers) / (1000 * 60) : 0;
 
-        StatsFormatter.sendColoredMessage(sender, getMessage("command.detailed.header"));
-        StatsFormatter.sendColoredMessage(sender, getMessage("command.detailed.current", currentOnline));
-        StatsFormatter.sendColoredMessage(sender, getMessage("command.detailed.record", maxOnline));
-        StatsFormatter.sendColoredMessage(sender, getMessage("command.detailed.unique", uniquePlayers));
-        StatsFormatter.sendColoredMessage(sender, getMessage("command.detailed.sessions", totalSessions));
-        StatsFormatter.sendColoredMessage(sender, getMessage("command.detailed.avg_time", averageMinutes));
-        StatsFormatter.sendColoredMessage(sender, getMessage("command.detailed.active", activeSessions));
+        sendColoredMessage(sender, getMessage("command.detailed.header"));
+        sendColoredMessage(sender, getMessage("command.detailed.current", currentOnline));
+        sendColoredMessage(sender, getMessage("command.detailed.record", maxOnline));
+        sendColoredMessage(sender, getMessage("command.detailed.unique", uniquePlayers));
+        sendColoredMessage(sender, getMessage("command.detailed.sessions", totalSessions));
+        sendColoredMessage(sender, getMessage("command.detailed.avg_time", averageMinutes));
+        sendColoredMessage(sender, getMessage("command.detailed.active", activeSessions));
 
         if (currentOnline > 0) {
             String onlinePlayers = server.getOnlinePlayers().stream()
                     .map(Player::getName)
                     .reduce((a, b) -> a + "§7, §f" + b)
                     .orElse("");
-            StatsFormatter.sendColoredMessage(sender, getMessage("command.detailed.online", onlinePlayers));
+            sendColoredMessage(sender, getMessage("command.detailed.online", onlinePlayers));
         }
     }
 
     private void sendTopStats(CommandSender sender) {
-        StatsFormatter.sendColoredMessage(sender, getMessage("command.top.header"));
+        sendColoredMessage(sender, getMessage("command.top.header"));
 
         Map<String, Integer> topPlayers = database.getTopPlayersByJoins(10);
         if (topPlayers.isEmpty()) {
-            StatsFormatter.sendColoredMessage(sender, getMessage("command.top.empty"));
+            sendColoredMessage(sender, getMessage("command.top.empty"));
             return;
         }
 
         int position = 1;
         for (Map.Entry<String, Integer> entry : topPlayers.entrySet()) {
             String medal = position == 1 ? "§6§l" : position == 2 ? "§7§l" : position == 3 ? "§c§l" : "§e";
-            StatsFormatter.sendColoredMessage(sender,
+            sendColoredMessage(sender,
                     getMessage("command.top.position", medal, position, entry.getKey(), entry.getValue()));
             position++;
         }
@@ -164,26 +165,41 @@ public class StatsCommandExecutor implements CommandExecutor, TabCompleter {
         long totalHours = totalPlaytime / (1000 * 60 * 60);
         long totalMinutes = (totalPlaytime / (1000 * 60)) % 60;
 
-        StatsFormatter.sendColoredMessage(sender, getMessage("command.player.header", playerName));
+        int deaths = database.getPlayerDeaths(playerName);
+        int mobKills = database.getPlayerMobKills(playerName);
+        int playerKills = database.getPlayerPlayerKills(playerName);
+        int blocksBroken = database.getPlayerBlocksBroken(playerName);
+        int blocksPlaced = database.getPlayerBlocksPlaced(playerName);
+        int messagesSent = database.getPlayerMessagesSent(playerName);
+
+        sendColoredMessage(sender, getMessage("command.player.header", playerName));
 
         if (player != null && player.isOnline()) {
             Long joinTime = playerJoinTimes.get(playerName);
             long sessionTime = joinTime != null ? System.currentTimeMillis() - joinTime : 0;
             long sessionMinutes = sessionTime / (1000 * 60);
 
-            StatsFormatter.sendColoredMessage(sender, getMessage("command.player.status.online"));
-            StatsFormatter.sendColoredMessage(sender, getMessage("command.player.session", sessionMinutes));
-            StatsFormatter.sendColoredMessage(sender, getMessage("command.player.ping", player.getPing()));
-            StatsFormatter.sendColoredMessage(sender, getMessage("command.player.location", formatLocation(player.getLocation())));
+            sendColoredMessage(sender, getMessage("command.player.status.online"));
+            sendColoredMessage(sender, getMessage("command.player.session", sessionMinutes));
+            sendColoredMessage(sender, getMessage("command.player.ping", player.getPing()));
+            sendColoredMessage(sender, getMessage("command.player.location", formatLocation(player.getLocation())));
         } else {
-            StatsFormatter.sendColoredMessage(sender, getMessage("command.player.status.offline"));
+            sendColoredMessage(sender, getMessage("command.player.status.offline"));
         }
 
         if (totalJoins > 0) {
-            StatsFormatter.sendColoredMessage(sender, getMessage("command.player.joins", totalJoins));
-            StatsFormatter.sendColoredMessage(sender, getMessage("command.player.total_time", totalHours, totalMinutes));
+            sendColoredMessage(sender, getMessage("command.player.joins", totalJoins));
+            sendColoredMessage(sender, getMessage("command.player.total_time", totalHours, totalMinutes));
+
+            sendColoredMessage(sender, getMessage("command.player.stats_header"));
+            sendColoredMessage(sender, getMessage("command.player.deaths", deaths));
+            sendColoredMessage(sender, getMessage("command.player.mob_kills", mobKills));
+            sendColoredMessage(sender, getMessage("command.player.player_kills", playerKills));
+            sendColoredMessage(sender, getMessage("command.player.blocks_broken", blocksBroken));
+            sendColoredMessage(sender, getMessage("command.player.blocks_placed", blocksPlaced));
+            sendColoredMessage(sender, getMessage("command.player.messages_sent", messagesSent));
         } else {
-            StatsFormatter.sendColoredMessage(sender, getMessage("command.player.not_found"));
+            sendColoredMessage(sender, getMessage("command.player.not_found"));
         }
     }
 
@@ -201,12 +217,12 @@ public class StatsCommandExecutor implements CommandExecutor, TabCompleter {
 
     private void toggleUI(CommandSender sender) {
         if (!(sender instanceof Player)) {
-            StatsFormatter.sendColoredMessage(sender, getMessage("command.ui.player_only"));
+            sendColoredMessage(sender, getMessage("command.ui.player_only"));
             return;
         }
 
         if (scoreboardServerStatisticsManager == null) {
-            StatsFormatter.sendColoredMessage(sender, getMessage("command.ui.disabled"));
+            sendColoredMessage(sender, getMessage("command.ui.disabled"));
             return;
         }
 
@@ -214,9 +230,9 @@ public class StatsCommandExecutor implements CommandExecutor, TabCompleter {
         boolean enabled = scoreboardServerStatisticsManager.toggleScoreboard(player);
 
         if (enabled) {
-            StatsFormatter.sendColoredMessage(sender, getMessage("command.ui.enabled"));
+            sendColoredMessage(sender, getMessage("command.ui.enabled"));
         } else {
-            StatsFormatter.sendColoredMessage(sender, getMessage("command.ui.disabled.player"));
+            sendColoredMessage(sender, getMessage("command.ui.disabled.player"));
         }
     }
 }
