@@ -27,17 +27,17 @@ public class DatabaseManager {
     private SessionRepository sessionRepo;
     private AnalyticsRepository analyticsRepo;
 
-    public DatabaseManager(File dataFolder) {
+    public DatabaseManager(final File dataFolder) {
         this.dataFolder = dataFolder;
     }
 
-    public void setTimezoneOffset(String offset) {
+    public void setTimezoneOffset(final String offset) {
         if (connectionManager != null) {
             connectionManager.setTimezoneOffset(offset);
         }
     }
 
-    public void connect(org.bukkit.configuration.file.FileConfiguration config) throws SQLException {
+    public void connect(final org.bukkit.configuration.file.FileConfiguration config) throws SQLException {
         connectionManager = new ConnectionManager();
         connectionManager.connect(config, dataFolder);
 
@@ -54,7 +54,7 @@ public class DatabaseManager {
     }
 
     // === Async Helper Methods ===
-    private CompletableFuture<Void> runAsync(Runnable task) {
+    private CompletableFuture<Void> runAsync(final Runnable task) {
         return CompletableFuture.runAsync(() -> {
             try {
                 task.run();
@@ -66,7 +66,7 @@ public class DatabaseManager {
     }
 
     // === Server Stats Methods (delegate to ServerStatsRepository) ===
-    public void updateMaxOnline(int currentOnline) {
+    public void updateMaxOnline(final int currentOnline) {
         runAsync(() -> serverStatsRepo.updateMaxOnline(currentOnline));
     }
 
@@ -83,29 +83,29 @@ public class DatabaseManager {
     }
 
     // === Player Stats Methods (delegate to PlayerStatsRepository) ===
-    public void recordPlayerJoin(String playerName) {
+    public void recordPlayerJoin(final String playerName) {
         runAsync(() -> {
             playerStatsRepo.recordPlayerJoin(playerName);
             sessionRepo.createSession(playerName);
         });
     }
 
-    public void recordPlayerQuit(String playerName, long sessionDuration) {
+    public void recordPlayerQuit(final String playerName, final long sessionDuration) {
         runAsync(() -> {
             sessionRepo.closeSession(playerName, sessionDuration);
             playerStatsRepo.updatePlaytime(playerName, sessionDuration);
         });
     }
 
-    public int getPlayerJoinCount(String playerName) {
+    public int getPlayerJoinCount(final String playerName) {
         return playerStatsRepo.getPlayerJoinCount(playerName);
     }
 
-    public long getPlayerTotalPlaytime(String playerName) {
+    public long getPlayerTotalPlaytime(final String playerName) {
         return playerStatsRepo.getPlayerTotalPlaytime(playerName);
     }
 
-    public Map<String, Integer> getTopPlayersByJoins(int limit) {
+    public Map<String, Integer> getTopPlayersByJoins(final int limit) {
         return playerStatsRepo.getTopPlayersByJoins(limit);
     }
 
@@ -125,81 +125,81 @@ public class DatabaseManager {
 
     // === Analytics Methods (delegate to AnalyticsRepository) ===
 
-    public void recordOnlineSnapshot(int onlineCount) {
+    public void recordOnlineSnapshot(final int onlineCount) {
         runAsync(() -> analyticsRepo.recordOnlineSnapshot(onlineCount));
     }
 
-    public Map<Integer, Double> getHourlyAverages(int days) {
+    public Map<Integer, Double> getHourlyAverages(final int days) {
         return analyticsRepo.getHourlyAverages(days);
     }
 
-    public Map<String, Double> getDailyAverages(int days) {
+    public Map<String, Double> getDailyAverages(final int days) {
         return analyticsRepo.getDailyAverages(days);
     }
 
-    public Map<Integer, Double> getWeekdayAverages(int weeks) {
+    public Map<Integer, Double> getWeekdayAverages(final int weeks) {
         return analyticsRepo.getWeekdayAverages(weeks);
     }
 
-    public Map<String, Integer> getPeakHours(int days) {
+    public Map<String, Integer> getPeakHours(final int days) {
         return analyticsRepo.getPeakHours(days);
     }
 
-    public void cleanOldSnapshots(int daysToKeep) {
+    public void cleanOldSnapshots(final int daysToKeep) {
         analyticsRepo.cleanOldSnapshots(daysToKeep);
     }
 
     // === Extended Statistics Methods ===
 
-    public void incrementDeaths(String playerName) {
+    public void incrementDeaths(final String playerName) {
         runAsync(() -> playerStatsRepo.incrementDeaths(playerName));
     }
 
-    public void incrementMobKills(String playerName) {
+    public void incrementMobKills(final String playerName) {
         runAsync(() -> playerStatsRepo.incrementMobKills(playerName));
     }
 
-    public void incrementPlayerKills(String playerName) {
+    public void incrementPlayerKills(final String playerName) {
         runAsync(() -> playerStatsRepo.incrementPlayerKills(playerName));
     }
 
-    public void incrementBlocksBroken(String playerName) {
+    public void incrementBlocksBroken(final String playerName) {
         runAsync(() -> playerStatsRepo.incrementBlocksBroken(playerName));
     }
 
-    public void incrementBlocksPlaced(String playerName) {
+    public void incrementBlocksPlaced(final String playerName) {
         runAsync(() -> playerStatsRepo.incrementBlocksPlaced(playerName));
     }
 
-    public void incrementMessagesSent(String playerName) {
+    public void incrementMessagesSent(final String playerName) {
         runAsync(() -> playerStatsRepo.incrementMessagesSent(playerName));
     }
 
-    public void updateLastActivity(String playerName) {
+    public void updateLastActivity(final String playerName) {
         runAsync(() -> playerStatsRepo.updateLastActivity(playerName));
     }
 
-    public int getPlayerDeaths(String playerName) {
+    public int getPlayerDeaths(final String playerName) {
         return playerStatsRepo.getPlayerDeaths(playerName);
     }
 
-    public int getPlayerMobKills(String playerName) {
+    public int getPlayerMobKills(final String playerName) {
         return playerStatsRepo.getPlayerMobKills(playerName);
     }
 
-    public int getPlayerPlayerKills(String playerName) {
+    public int getPlayerPlayerKills(final String playerName) {
         return playerStatsRepo.getPlayerPlayerKills(playerName);
     }
 
-    public int getPlayerBlocksBroken(String playerName) {
+    public int getPlayerBlocksBroken(final String playerName) {
         return playerStatsRepo.getPlayerBlocksBroken(playerName);
     }
 
-    public int getPlayerBlocksPlaced(String playerName) {
+    public int getPlayerBlocksPlaced(final String playerName) {
         return playerStatsRepo.getPlayerBlocksPlaced(playerName);
     }
 
-    public int getPlayerMessagesSent(String playerName) {
+    public int getPlayerMessagesSent(final String playerName) {
         return playerStatsRepo.getPlayerMessagesSent(playerName);
     }
 }

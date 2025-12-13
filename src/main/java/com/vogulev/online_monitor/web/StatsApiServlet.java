@@ -21,33 +21,33 @@ public class StatsApiServlet extends HttpServlet {
     private final OnlineMonitorPlugin plugin;
     private final Gson gson;
 
-    public StatsApiServlet(DatabaseManager database, OnlineMonitorPlugin plugin) {
+    public StatsApiServlet(final DatabaseManager database, final OnlineMonitorPlugin plugin) {
         this.database = database;
         this.plugin = plugin;
         this.gson = new GsonBuilder().setPrettyPrinting().create();
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws IOException {
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
         resp.setHeader("Access-Control-Allow-Origin", "*");
 
         try {
-            Map<String, Object> stats = new HashMap<>();
+            final Map<String, Object> stats = new HashMap<>();
             stats.put("maxOnline", database.getMaxOnline());
             stats.put("uniquePlayers", database.getUniquePlayersCount());
             stats.put("totalSessions", database.getTotalSessions());
             stats.put("activeSessions", database.getActiveSessions());
             stats.put("totalPlaytime", database.getTotalPlaytime());
 
-            Map<String, Integer> topPlayers = database.getTopPlayersByJoins(10);
+            final Map<String, Integer> topPlayers = database.getTopPlayersByJoins(10);
             stats.put("topPlayers", topPlayers);
 
             resp.getWriter().write(gson.toJson(stats));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            Map<String, String> error = new HashMap<>();
+            final Map<String, String> error = new HashMap<>();
             error.put("error", e.getMessage());
             resp.getWriter().write(gson.toJson(error));
         }

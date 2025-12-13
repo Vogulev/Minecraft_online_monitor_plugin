@@ -22,11 +22,11 @@ public class DashboardServlet extends HttpServlet {
     private String cachedHtml = null;
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws IOException {
         resp.setContentType("text/html");
         resp.setCharacterEncoding("UTF-8");
 
-        String html = getHtmlPage();
+        final String html = getHtmlPage();
         if (html != null) {
             resp.getWriter().write(html);
         } else {
@@ -44,29 +44,21 @@ public class DashboardServlet extends HttpServlet {
             return cachedHtml;
         }
 
-        try (InputStream inputStream = getClass().getResourceAsStream(HTML_RESOURCE_PATH)) {
+        try (final InputStream inputStream = getClass().getResourceAsStream(HTML_RESOURCE_PATH)) {
             if (inputStream == null) {
                 logger.severe("Dashboard HTML file not found: " + HTML_RESOURCE_PATH);
                 return null;
             }
 
-            try (BufferedReader reader = new BufferedReader(
+            try (final BufferedReader reader = new BufferedReader(
                     new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
                 cachedHtml = reader.lines().collect(Collectors.joining("\n"));
                 logger.info("Dashboard HTML loaded successfully from " + HTML_RESOURCE_PATH);
                 return cachedHtml;
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             logger.severe("Error loading dashboard HTML: " + e.getMessage());
-            e.printStackTrace();
             return null;
         }
-    }
-
-    /**
-     * Clear HTML cache (useful for development)
-     */
-    public void clearCache() {
-        cachedHtml = null;
     }
 }
