@@ -9,7 +9,7 @@ public class CleanupTask implements Runnable {
     private final DatabaseManager database;
     private final int daysToKeep;
 
-    public CleanupTask(DatabaseManager database, int daysToKeep) {
+    public CleanupTask(final DatabaseManager database, final int daysToKeep) {
         this.database = database;
         this.daysToKeep = daysToKeep;
     }

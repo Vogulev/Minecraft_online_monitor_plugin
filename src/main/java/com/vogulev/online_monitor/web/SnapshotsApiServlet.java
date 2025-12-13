@@ -23,13 +23,13 @@ public class SnapshotsApiServlet extends HttpServlet {
     private final DatabaseManager database;
     private final Gson gson;
 
-    public SnapshotsApiServlet(DatabaseManager database) {
+    public SnapshotsApiServlet(final DatabaseManager database) {
         this.database = database;
         this.gson = new GsonBuilder().setPrettyPrinting().create();
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws IOException {
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
         resp.setHeader("Access-Control-Allow-Origin", "*");
@@ -40,59 +40,59 @@ public class SnapshotsApiServlet extends HttpServlet {
                 type = "hourly";
             }
 
-            Object data;
+            final Object data;
             switch (type.toLowerCase()) {
                 case "hourly":
-                    int hourlyDays = getIntParam(req, "days", 7);
+                    final int hourlyDays = getIntParam(req, "days", 7);
                     data = database.getHourlyAverages(hourlyDays);
                     break;
                 case "daily":
-                    int dailyDays = getIntParam(req, "days", 30);
+                    final int dailyDays = getIntParam(req, "days", 30);
                     data = database.getDailyAverages(dailyDays);
                     break;
                 case "weekday":
-                    int weeks = getIntParam(req, "weeks", 4);
+                    final int weeks = getIntParam(req, "weeks", 4);
                     data = convertWeekdayMap(database.getWeekdayAverages(weeks));
                     break;
                 case "peak":
-                    int peakDays = getIntParam(req, "days", 7);
+                    final int peakDays = getIntParam(req, "days", 7);
                     data = database.getPeakHours(peakDays);
                     break;
                 default:
                     resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                    Map<String, String> error = new HashMap<>();
+                    final Map<String, String> error = new HashMap<>();
                     error.put("error", "Invalid type parameter. Use: hourly, daily, weekday, or peak");
                     resp.getWriter().write(gson.toJson(error));
                     return;
             }
 
             resp.getWriter().write(gson.toJson(data));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            Map<String, String> error = new HashMap<>();
+            final Map<String, String> error = new HashMap<>();
             error.put("error", e.getMessage());
             resp.getWriter().write(gson.toJson(error));
         }
     }
 
-    private int getIntParam(HttpServletRequest req, String paramName, int defaultValue) {
-        String param = req.getParameter(paramName);
+    private int getIntParam(final HttpServletRequest req, final String paramName, final int defaultValue) {
+        final String param = req.getParameter(paramName);
         if (param != null) {
             try {
                 return Integer.parseInt(param);
-            } catch (NumberFormatException e) {
+            } catch (final NumberFormatException e) {
                 return defaultValue;
             }
         }
         return defaultValue;
     }
 
-    private Map<String, Double> convertWeekdayMap(Map<Integer, Double> weekdayData) {
-        Map<String, Double> result = new LinkedHashMap<>();
-        String[] weekdays = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+    private Map<String, Double> convertWeekdayMap(final Map<Integer, Double> weekdayData) {
+        final Map<String, Double> result = new LinkedHashMap<>();
+        final String[] weekdays = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 
-        for (Map.Entry<Integer, Double> entry : weekdayData.entrySet()) {
-            int dayNum = entry.getKey();
+        for (final Map.Entry<Integer, Double> entry : weekdayData.entrySet()) {
+            final int dayNum = entry.getKey();
             if (dayNum >= 0 && dayNum < weekdays.length) {
                 result.put(weekdays[dayNum], entry.getValue());
             }

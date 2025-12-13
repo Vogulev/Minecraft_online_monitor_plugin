@@ -23,11 +23,11 @@ public class DiscordBot extends ListenerAdapter {
     private final OnlineMonitorPlugin plugin;
     private String channelId;
 
-    public DiscordBot(OnlineMonitorPlugin plugin) {
+    public DiscordBot(final OnlineMonitorPlugin plugin) {
         this.plugin = plugin;
     }
 
-    public void start(String token, String channelId) {
+    public void start(final String token, final String channelId) {
         this.channelId = channelId;
 
         try {
@@ -58,10 +58,10 @@ public class DiscordBot extends ListenerAdapter {
             );
 
             logger.info("Discord bot successfully started! Status: " + jda.getStatus());
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             logger.severe("Error waiting for Discord bot to start: " + e.getMessage());
             Thread.currentThread().interrupt();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.severe("Error starting Discord bot: " + e.getClass().getName() + ": " + e.getMessage());
             logger.severe("Possible reasons:");
             logger.severe("  1. Incorrect bot token");
@@ -82,7 +82,7 @@ public class DiscordBot extends ListenerAdapter {
                     jda.awaitShutdown();
                 }
                 logger.info("Discord bot stopped");
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
                 Thread.currentThread().interrupt();
                 jda.shutdownNow();
             }
@@ -90,7 +90,7 @@ public class DiscordBot extends ListenerAdapter {
     }
 
     @Override
-    public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
+    public void onSlashCommandInteraction(final SlashCommandInteractionEvent event) {
         switch (event.getName()) {
             case "online":
                 handleOnlineCommand(event);
@@ -107,14 +107,14 @@ public class DiscordBot extends ListenerAdapter {
         }
     }
 
-    private void handleOnlineCommand(SlashCommandInteractionEvent event) {
+    private void handleOnlineCommand(final SlashCommandInteractionEvent event) {
         event.deferReply().queue();
 
-        int currentOnline = plugin.getServer().getOnlinePlayers().size();
-        int maxOnline = plugin.getDatabase().getMaxOnline();
-        int uniquePlayers = plugin.getDatabase().getUniquePlayersCount();
+        final int currentOnline = plugin.getServer().getOnlinePlayers().size();
+        final int maxOnline = plugin.getDatabase().getMaxOnline();
+        final int uniquePlayers = plugin.getDatabase().getUniquePlayersCount();
 
-        EmbedBuilder embed = new EmbedBuilder()
+        final EmbedBuilder embed = new EmbedBuilder()
                 .setTitle(getMessage("discord.embed.online.title"))
                 .setColor(Color.GREEN)
                 .addField(getMessage("discord.embed.online.current"),
@@ -127,19 +127,19 @@ public class DiscordBot extends ListenerAdapter {
         event.getHook().sendMessageEmbeds(embed.build()).queue();
     }
 
-    private void handleStatsCommand(SlashCommandInteractionEvent event) {
+    private void handleStatsCommand(final SlashCommandInteractionEvent event) {
         event.deferReply().queue();
 
-        DatabaseManager db = plugin.getDatabase();
-        int currentOnline = plugin.getServer().getOnlinePlayers().size();
-        int maxOnline = db.getMaxOnline();
-        int uniquePlayers = db.getUniquePlayersCount();
-        int totalSessions = db.getTotalSessions();
-        int activeSessions = db.getActiveSessions();
-        long totalPlaytime = db.getTotalPlaytime();
-        long averageMinutes = uniquePlayers > 0 ? (totalPlaytime / uniquePlayers) / (1000 * 60) : 0;
+        final DatabaseManager db = plugin.getDatabase();
+        final int currentOnline = plugin.getServer().getOnlinePlayers().size();
+        final int maxOnline = db.getMaxOnline();
+        final int uniquePlayers = db.getUniquePlayersCount();
+        final int totalSessions = db.getTotalSessions();
+        final int activeSessions = db.getActiveSessions();
+        final long totalPlaytime = db.getTotalPlaytime();
+        final long averageMinutes = uniquePlayers > 0 ? (totalPlaytime / uniquePlayers) / (1000 * 60) : 0;
 
-        EmbedBuilder embed = new EmbedBuilder()
+        final EmbedBuilder embed = new EmbedBuilder()
                 .setTitle(getMessage("discord.embed.stats.title"))
                 .setColor(Color.BLUE)
                 .addField(getMessage("discord.embed.stats.current"), String.valueOf(currentOnline), true)
@@ -155,24 +155,24 @@ public class DiscordBot extends ListenerAdapter {
         event.getHook().sendMessageEmbeds(embed.build()).queue();
     }
 
-    private void handleTopCommand(SlashCommandInteractionEvent event) {
+    private void handleTopCommand(final SlashCommandInteractionEvent event) {
         event.deferReply().queue();
 
-        Map<String, Integer> topPlayers = plugin.getDatabase().getTopPlayersByJoins(10);
+        final Map<String, Integer> topPlayers = plugin.getDatabase().getTopPlayersByJoins(10);
 
         if (topPlayers.isEmpty()) {
             event.getHook().sendMessage(getMessage("discord.embed.top.empty")).queue();
             return;
         }
 
-        EmbedBuilder embed = new EmbedBuilder()
+        final EmbedBuilder embed = new EmbedBuilder()
                 .setTitle(getMessage("discord.embed.top.title"))
                 .setColor(Color.ORANGE);
 
         int position = 1;
-        StringBuilder topList = new StringBuilder();
-        for (Map.Entry<String, Integer> entry : topPlayers.entrySet()) {
-            String medal = position == 1 ? "🥇" : position == 2 ? "🥈" : position == 3 ? "🥉" : "▪️";
+        final StringBuilder topList = new StringBuilder();
+        for (final Map.Entry<String, Integer> entry : topPlayers.entrySet()) {
+            final String medal = position == 1 ? "🥇" : position == 2 ? "🥈" : position == 3 ? "🥉" : "▪️";
             topList.append(medal).append(" **").append(position).append(".** ")
                     .append(entry.getKey()).append(" - ")
                     .append(getMessage("discord.embed.top.joins", entry.getValue())).append("\n");
@@ -186,25 +186,25 @@ public class DiscordBot extends ListenerAdapter {
         event.getHook().sendMessageEmbeds(embed.build()).queue();
     }
 
-    private void handlePlayerCommand(SlashCommandInteractionEvent event) {
+    private void handlePlayerCommand(final SlashCommandInteractionEvent event) {
         event.deferReply().queue();
 
-        String playerName = event.getOption("nickname").getAsString();
-        DatabaseManager db = plugin.getDatabase();
+        final String playerName = event.getOption("nickname").getAsString();
+        final DatabaseManager db = plugin.getDatabase();
 
-        int totalJoins = db.getPlayerJoinCount(playerName);
-        long totalPlaytime = db.getPlayerTotalPlaytime(playerName);
-        long totalHours = totalPlaytime / (1000 * 60 * 60);
-        long totalMinutes = (totalPlaytime / (1000 * 60)) % 60;
+        final int totalJoins = db.getPlayerJoinCount(playerName);
+        final long totalPlaytime = db.getPlayerTotalPlaytime(playerName);
+        final long totalHours = totalPlaytime / (1000 * 60 * 60);
+        final long totalMinutes = (totalPlaytime / (1000 * 60)) % 60;
 
         if (totalJoins == 0) {
             event.getHook().sendMessage(getMessage("discord.embed.player.not_found", playerName)).queue();
             return;
         }
 
-        boolean isOnline = plugin.getServer().getPlayer(playerName) != null;
+        final boolean isOnline = plugin.getServer().getPlayer(playerName) != null;
 
-        EmbedBuilder embed = new EmbedBuilder()
+        final EmbedBuilder embed = new EmbedBuilder()
                 .setTitle(getMessage("discord.embed.player.title", playerName))
                 .setColor(isOnline ? Color.GREEN : Color.GRAY)
                 .addField(getMessage("discord.embed.player.status"),
@@ -219,17 +219,17 @@ public class DiscordBot extends ListenerAdapter {
     }
     // === Methods for sending notifications ===
 
-    public void sendPlayerJoinNotification(String playerName, int currentOnline, boolean isNewPlayer) {
+    public void sendPlayerJoinNotification(final String playerName, final int currentOnline, final boolean isNewPlayer) {
         if (jda == null || channelId == null || channelId.isEmpty()) return;
 
-        TextChannel channel = jda.getTextChannelById(channelId);
+        final TextChannel channel = jda.getTextChannelById(channelId);
         if (channel == null) return;
 
-        String message = isNewPlayer ?
+        final String message = isNewPlayer ?
                 getMessage("discord.notification.join.new", playerName) :
                 getMessage("discord.notification.join", playerName);
 
-        EmbedBuilder embed = new EmbedBuilder()
+        final EmbedBuilder embed = new EmbedBuilder()
                 .setColor(Color.GREEN)
                 .setDescription(message)
                 .addField(getMessage("discord.notification.online"),
@@ -242,13 +242,13 @@ public class DiscordBot extends ListenerAdapter {
         );
     }
 
-    public void sendPlayerQuitNotification(String playerName, int currentOnline, long sessionMinutes) {
+    public void sendPlayerQuitNotification(final String playerName, final int currentOnline, final long sessionMinutes) {
         if (jda == null || channelId == null || channelId.isEmpty()) return;
 
-        TextChannel channel = jda.getTextChannelById(channelId);
+        final TextChannel channel = jda.getTextChannelById(channelId);
         if (channel == null) return;
 
-        EmbedBuilder embed = new EmbedBuilder()
+        final EmbedBuilder embed = new EmbedBuilder()
                 .setColor(Color.ORANGE)
                 .setDescription(getMessage("discord.notification.quit", playerName))
                 .addField(getMessage("discord.notification.online"),
@@ -263,13 +263,13 @@ public class DiscordBot extends ListenerAdapter {
         );
     }
 
-    public void sendNewRecordNotification(int newRecord) {
+    public void sendNewRecordNotification(final int newRecord) {
         if (jda == null || channelId == null || channelId.isEmpty()) return;
 
-        TextChannel channel = jda.getTextChannelById(channelId);
+        final TextChannel channel = jda.getTextChannelById(channelId);
         if (channel == null) return;
 
-        EmbedBuilder embed = new EmbedBuilder()
+        final EmbedBuilder embed = new EmbedBuilder()
                 .setTitle(getMessage("discord.notification.record.title"))
                 .setColor(Color.RED)
                 .setDescription(getMessage("discord.notification.record.message", newRecord))
@@ -284,10 +284,10 @@ public class DiscordBot extends ListenerAdapter {
     public void sendServerStartNotification() {
         if (jda == null || channelId == null || channelId.isEmpty()) return;
 
-        TextChannel channel = jda.getTextChannelById(channelId);
+        final TextChannel channel = jda.getTextChannelById(channelId);
         if (channel == null) return;
 
-        EmbedBuilder embed = new EmbedBuilder()
+        final EmbedBuilder embed = new EmbedBuilder()
                 .setTitle(getMessage("discord.notification.server.start.title"))
                 .setColor(Color.GREEN)
                 .setDescription(getMessage("discord.notification.server.start.message"))
@@ -302,10 +302,10 @@ public class DiscordBot extends ListenerAdapter {
     public void sendServerStopNotification() {
         if (jda == null || channelId == null || channelId.isEmpty()) return;
 
-        TextChannel channel = jda.getTextChannelById(channelId);
+        final TextChannel channel = jda.getTextChannelById(channelId);
         if (channel == null) return;
 
-        EmbedBuilder embed = new EmbedBuilder()
+        final EmbedBuilder embed = new EmbedBuilder()
                 .setTitle(getMessage("discord.notification.server.stop.title"))
                 .setColor(Color.RED)
                 .setDescription(getMessage("discord.notification.server.stop.message"))
@@ -313,7 +313,7 @@ public class DiscordBot extends ListenerAdapter {
 
         try {
             channel.sendMessageEmbeds(embed.build()).complete();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.warning("Can't send notification about server stopped: " + e.getMessage());
         }
 

@@ -30,9 +30,9 @@ public class PlayerEventListener implements Listener {
     private final Runnable onNewRecordCallback;
     private ScoreboardServerStatisticsManager scoreboardServerStatisticsManager;
 
-    public PlayerEventListener(DatabaseManager database, DiscordBot discordBot, Server server,
-                                FileConfiguration config, Map<String, Long> playerJoinTimes,
-                                Runnable onNewRecordCallback) {
+    public PlayerEventListener(final DatabaseManager database, final DiscordBot discordBot, final Server server,
+                                final FileConfiguration config, final Map<String, Long> playerJoinTimes,
+                                final Runnable onNewRecordCallback) {
         this.database = database;
         this.discordBot = discordBot;
         this.server = server;
@@ -41,18 +41,18 @@ public class PlayerEventListener implements Listener {
         this.onNewRecordCallback = onNewRecordCallback;
     }
 
-    public void setScoreboardManager(ScoreboardServerStatisticsManager scoreboardServerStatisticsManager) {
+    public void setScoreboardManager(final ScoreboardServerStatisticsManager scoreboardServerStatisticsManager) {
         this.scoreboardServerStatisticsManager = scoreboardServerStatisticsManager;
     }
 
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-        String playerName = player.getName();
+    public void onPlayerJoin(final PlayerJoinEvent event) {
+        final Player player = event.getPlayer();
+        final String playerName = player.getName();
 
         updateMaxOnline();
 
-        boolean isFirstTime = !player.hasPlayedBefore();
+        final boolean isFirstTime = !player.hasPlayedBefore();
         if (isFirstTime) {
             database.incrementUniquePlayer();
             logger.info("New player joined: " + player.getName());
@@ -74,11 +74,11 @@ public class PlayerEventListener implements Listener {
         player.sendMessage(welcomeMessage);
 
         if (discordBot != null) {
-            boolean notifyJoin = config.getBoolean("discord.notifications.player-join", true);
-            boolean notifyNewPlayer = config.getBoolean("discord.notifications.new-player", true);
+            final boolean notifyJoin = config.getBoolean("discord.notifications.player-join", true);
+            final boolean notifyNewPlayer = config.getBoolean("discord.notifications.new-player", true);
 
             if ((notifyJoin && !isFirstTime) || (notifyNewPlayer && isFirstTime)) {
-                int currentOnline = server.getOnlinePlayers().size();
+                final int currentOnline = server.getOnlinePlayers().size();
                 discordBot.sendPlayerJoinNotification(playerName, currentOnline, isFirstTime);
             }
         }
@@ -96,21 +96,21 @@ public class PlayerEventListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent event) {
-        Player player = event.getPlayer();
-        String playerName = player.getName();
+    public void onPlayerQuit(final PlayerQuitEvent event) {
+        final Player player = event.getPlayer();
+        final String playerName = player.getName();
 
-        Long joinTime = playerJoinTimes.get(playerName);
+        final Long joinTime = playerJoinTimes.get(playerName);
         if (joinTime != null) {
-            long sessionTime = System.currentTimeMillis() - joinTime;
-            long minutes = sessionTime / (1000 * 60);
+            final long sessionTime = System.currentTimeMillis() - joinTime;
+            final long minutes = sessionTime / (1000 * 60);
 
             database.recordPlayerQuit(playerName, sessionTime);
 
             logger.info(playerName + " spent in game: " + minutes + " minutes");
 
             if (discordBot != null && config.getBoolean("discord.notifications.player-quit", true)) {
-                int currentOnline = server.getOnlinePlayers().size() - 1;
+                final int currentOnline = server.getOnlinePlayers().size() - 1;
                 discordBot.sendPlayerQuitNotification(playerName, currentOnline, minutes);
             }
 
@@ -125,7 +125,7 @@ public class PlayerEventListener implements Listener {
     }
 
     private void updateMaxOnline() {
-        int currentOnline = server.getOnlinePlayers().size();
+        final int currentOnline = server.getOnlinePlayers().size();
         database.updateMaxOnline(currentOnline);
     }
 }

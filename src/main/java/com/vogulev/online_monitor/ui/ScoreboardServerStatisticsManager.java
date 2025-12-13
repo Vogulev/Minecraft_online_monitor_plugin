@@ -31,32 +31,32 @@ public class ScoreboardServerStatisticsManager
     private final boolean globallyEnabled;
 
 
-    public ScoreboardServerStatisticsManager(DatabaseManager database, boolean enabled)
+    public ScoreboardServerStatisticsManager(final DatabaseManager database, final boolean enabled)
     {
         this.database = database;
         this.globallyEnabled = enabled;
     }
 
 
-    public void showScoreboard(Player player)
+    public void showScoreboard(final Player player)
     {
         if (!globallyEnabled)
         {
             return;
         }
 
-        UUID playerId = player.getUniqueId();
+        final UUID playerId = player.getUniqueId();
 
         if (playerScoreboardEnabled.containsKey(playerId) && !playerScoreboardEnabled.get(playerId))
         {
             return;
         }
 
-        ScoreboardManager manager = Bukkit.getScoreboardManager();
+        final ScoreboardManager manager = Bukkit.getScoreboardManager();
 
-        Scoreboard scoreboard = manager.getNewScoreboard();
-        Objective objective = scoreboard.registerNewObjective("online_stats", "dummy",
-                ChatColor.translateAlternateColorCodes('&', getMessage("scoreboard.title")));
+        final Scoreboard scoreboard = manager.getNewScoreboard();
+        final Objective objective = scoreboard.registerNewObjective("online_stats", "dummy",
+            ChatColor.translateAlternateColorCodes('&', getMessage("scoreboard.title")));
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
         objective.setDisplayName(ChatColor.translateAlternateColorCodes('&', getMessage("scoreboard.title")));
 
@@ -69,21 +69,21 @@ public class ScoreboardServerStatisticsManager
 
     public void updateAllScoreboards()
     {
-        for (Player player : Bukkit.getOnlinePlayers())
+        for (final Player player : Bukkit.getOnlinePlayers())
         {
             updateScoreboard(player);
         }
     }
 
 
-    public void updateScoreboard(Player player)
+    public void updateScoreboard(final Player player)
     {
         if (!globallyEnabled)
         {
             return;
         }
 
-        UUID playerId = player.getUniqueId();
+        final UUID playerId = player.getUniqueId();
 
         if (playerScoreboardEnabled.containsKey(playerId) && !playerScoreboardEnabled.get(playerId))
         {
@@ -102,22 +102,22 @@ public class ScoreboardServerStatisticsManager
             return;
         }
 
-        Objective objective = scoreboard.getObjective("online_stats");
+        final Objective objective = scoreboard.getObjective("online_stats");
         if (objective == null)
         {
             return;
         }
 
-        for (String entry : scoreboard.getEntries())
+        for (final String entry : scoreboard.getEntries())
         {
             scoreboard.resetScores(entry);
         }
 
-        int currentOnline = Bukkit.getOnlinePlayers().size();
-        int maxOnline = database.getMaxOnline();
-        int uniquePlayers = database.getUniquePlayersCount();
-        long totalPlaytime = database.getTotalPlaytime();
-        int averageMinutes = uniquePlayers > 0 ? (int) ((totalPlaytime / uniquePlayers) / (1000 * 60)) : 0;
+        final int currentOnline = Bukkit.getOnlinePlayers().size();
+        final int maxOnline = database.getMaxOnline();
+        final int uniquePlayers = database.getUniquePlayersCount();
+        final long totalPlaytime = database.getTotalPlaytime();
+        final int averageMinutes = uniquePlayers > 0 ? (int) ((totalPlaytime / uniquePlayers) / (1000 * 60)) : 0;
 
         objective.getScore(colorize(getMessage("scoreboard.avg"))).setScore(averageMinutes);
         objective.getScore(colorize(getMessage("scoreboard.online"))).setScore(currentOnline);
@@ -126,28 +126,28 @@ public class ScoreboardServerStatisticsManager
     }
 
 
-    private void enableScoreboard(Player player)
+    private void enableScoreboard(final Player player)
     {
-        UUID playerId = player.getUniqueId();
+        final UUID playerId = player.getUniqueId();
         playerScoreboardEnabled.put(playerId, true);
         showScoreboard(player);
         updateScoreboard(player);
     }
 
 
-    private void disableScoreboard(Player player)
+    private void disableScoreboard(final Player player)
     {
-        UUID playerId = player.getUniqueId();
+        final UUID playerId = player.getUniqueId();
         playerScoreboardEnabled.put(playerId, false);
 
         playerScoreboards.remove(playerId);
     }
 
 
-    public boolean toggleScoreboard(Player player)
+    public boolean toggleScoreboard(final Player player)
     {
-        UUID playerId = player.getUniqueId();
-        boolean currentState = playerScoreboardEnabled.getOrDefault(playerId, true);
+        final UUID playerId = player.getUniqueId();
+        final boolean currentState = playerScoreboardEnabled.getOrDefault(playerId, true);
 
         if (currentState)
         {
@@ -162,14 +162,14 @@ public class ScoreboardServerStatisticsManager
     }
 
 
-    public void removePlayer(Player player)
+    public void removePlayer(final Player player)
     {
-        UUID playerId = player.getUniqueId();
+        final UUID playerId = player.getUniqueId();
         playerScoreboards.remove(playerId);
     }
 
 
-    private String colorize(String text)
+    private String colorize(final String text)
     {
         return ChatColor.translateAlternateColorCodes('&', text);
     }

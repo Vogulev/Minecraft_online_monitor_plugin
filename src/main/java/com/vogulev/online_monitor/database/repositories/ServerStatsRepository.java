@@ -21,7 +21,7 @@ public class ServerStatsRepository {
     private final AtomicInteger cachedUniquePlayersCount = new AtomicInteger(0);
     private volatile boolean cacheInitialized = false;
 
-    public ServerStatsRepository(ConnectionManager connectionManager) {
+    public ServerStatsRepository(final ConnectionManager connectionManager) {
         this.connectionManager = connectionManager;
     }
 
@@ -37,8 +37,8 @@ public class ServerStatsRepository {
         }
     }
 
-    public void updateMaxOnline(int currentOnline) {
-        String sql = "UPDATE server_stats SET max_online = ? WHERE id = 1 AND max_online < ?";
+    public void updateMaxOnline(final int currentOnline) {
+        final String sql = "UPDATE server_stats SET max_online = ? WHERE id = 1 AND max_online < ?";
         try (Connection conn = connectionManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, currentOnline);
@@ -48,20 +48,20 @@ public class ServerStatsRepository {
             if (currentOnline > cachedMaxOnline) {
                 cachedMaxOnline = currentOnline;
             }
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             logger.severe("Error updating max online: " + e.getMessage());
         }
     }
 
     private int getMaxOnlineFromDB() {
-        String sql = "SELECT max_online FROM server_stats WHERE id = 1";
+        final String sql = "SELECT max_online FROM server_stats WHERE id = 1";
         try (Connection conn = connectionManager.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             if (rs.next()) {
                 return rs.getInt("max_online");
             }
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             logger.severe("Error getting max online: " + e.getMessage());
         }
         return 0;
@@ -73,26 +73,26 @@ public class ServerStatsRepository {
     }
 
     public void incrementUniquePlayer() {
-        String sql = "UPDATE server_stats SET total_unique_players = total_unique_players + 1 WHERE id = 1";
+        final String sql = "UPDATE server_stats SET total_unique_players = total_unique_players + 1 WHERE id = 1";
         try (Connection conn = connectionManager.getConnection();
              Statement stmt = conn.createStatement()) {
             stmt.execute(sql);
 
             cachedUniquePlayersCount.incrementAndGet();
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             logger.severe("Error incrementing unique players: " + e.getMessage());
         }
     }
 
     private int getUniquePlayersCountFromDB() {
-        String sql = "SELECT total_unique_players FROM server_stats WHERE id = 1";
+        final String sql = "SELECT total_unique_players FROM server_stats WHERE id = 1";
         try (Connection conn = connectionManager.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             if (rs.next()) {
                 return rs.getInt("total_unique_players");
             }
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             logger.severe("Error getting unique players count: " + e.getMessage());
         }
         return 0;

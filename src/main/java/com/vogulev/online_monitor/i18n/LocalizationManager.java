@@ -1,5 +1,7 @@
 package com.vogulev.online_monitor.i18n;
 
+import com.vogulev.online_monitor.LocalizationKey;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -25,7 +27,7 @@ public class LocalizationManager {
      * Initializes localization with specified language
      * @param lang Language code (en or ru)
      */
-    public static void initialize(String lang) {
+    public static void initialize(final String lang) {
         language = lang != null ? lang : "en";
         loadMessages();
     }
@@ -34,12 +36,12 @@ public class LocalizationManager {
      * Loads messages from properties file
      */
     private static void loadMessages() {
-        String fileName = "messages_" + language + ".properties";
+        final String fileName = "messages_" + language + ".properties";
 
-        try (InputStream stream = LocalizationManager.class.getClassLoader().getResourceAsStream(fileName)) {
+        try (final InputStream stream = LocalizationManager.class.getClassLoader().getResourceAsStream(fileName)) {
             if (stream == null) {
                 logger.warning("Localization file not found: " + fileName + ", using English");
-                try (InputStream enStream = LocalizationManager.class.getClassLoader().getResourceAsStream("messages_en.properties")) {
+                try (final InputStream enStream = LocalizationManager.class.getClassLoader().getResourceAsStream("messages_en.properties")) {
                     if (enStream != null) {
                         messages = new PropertyResourceBundle(new InputStreamReader(enStream, StandardCharsets.UTF_8));
                     } else {
@@ -61,7 +63,7 @@ public class LocalizationManager {
      * @param key Message key
      * @return Localized message or key if not found
      */
-    public static String getMessage(String key) {
+    public static String getMessage(final String key) {
         if (messages == null) {
             return key;
         }
@@ -80,8 +82,8 @@ public class LocalizationManager {
      * @param params Parameters to insert into message
      * @return Formatted localized message
      */
-    public static String getMessage(String key, Object... params) {
-        String message = getMessage(key);
+    public static String getMessage(final String key, final Object... params) {
+        final String message = getMessage(key);
         try {
             return MessageFormat.format(message, params);
         } catch (Exception e) {
@@ -91,10 +93,21 @@ public class LocalizationManager {
     }
 
     /**
-     * Gets the current language code
-     * @return Language code (en or ru)
+     * Gets a localized message by key (type-safe enum version)
+     * @param key Message key enum
+     * @return Localized message or key if not found
      */
-    public static String getLanguage() {
-        return language;
+    public static String getMessage(final LocalizationKey key) {
+        return getMessage(key.getKey());
+    }
+
+    /**
+     * Gets a localized message with parameters (type-safe enum version)
+     * @param key Message key enum
+     * @param params Parameters to insert into message
+     * @return Formatted localized message
+     */
+    public static String getMessage(final LocalizationKey key, final Object... params) {
+        return getMessage(key.getKey(), params);
     }
 }

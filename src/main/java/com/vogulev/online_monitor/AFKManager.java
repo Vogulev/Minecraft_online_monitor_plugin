@@ -17,7 +17,7 @@ public class AFKManager {
      * Create AFK manager with specified threshold
      * @param afkThresholdMinutes Minutes of inactivity before marking as AFK
      */
-    public AFKManager(int afkThresholdMinutes) {
+    public AFKManager(final int afkThresholdMinutes) {
         this.afkThresholdMillis = afkThresholdMinutes * 60 * 1000L;
     }
 
@@ -25,7 +25,7 @@ public class AFKManager {
      * Update player's last activity time
      * @param playerName Player name
      */
-    public void updateActivity(String playerName) {
+    public void updateActivity(final String playerName) {
         lastActivityTime.put(playerName, System.currentTimeMillis());
     }
 
@@ -33,7 +33,7 @@ public class AFKManager {
      * Remove player from tracking (e.g., on quit)
      * @param playerName Player name
      */
-    public void removePlayer(String playerName) {
+    public void removePlayer(final String playerName) {
         lastActivityTime.remove(playerName);
     }
 
@@ -42,12 +42,12 @@ public class AFKManager {
      * @param playerName Player name
      * @return true if player is AFK
      */
-    public boolean isAFK(String playerName) {
-        Long lastActivity = lastActivityTime.get(playerName);
+    public boolean isAFK(final String playerName) {
+        final Long lastActivity = lastActivityTime.get(playerName);
         if (lastActivity == null) {
             return false;
         }
-        long timeSinceActivity = System.currentTimeMillis() - lastActivity;
+        final long timeSinceActivity = System.currentTimeMillis() - lastActivity;
         return timeSinceActivity >= afkThresholdMillis;
     }
 
@@ -56,8 +56,8 @@ public class AFKManager {
      * @param playerName Player name
      * @return Time since last activity, or 0 if not tracked
      */
-    public long getTimeSinceActivity(String playerName) {
-        Long lastActivity = lastActivityTime.get(playerName);
+    public long getTimeSinceActivity(final String playerName) {
+        final Long lastActivity = lastActivityTime.get(playerName);
         if (lastActivity == null) {
             return 0;
         }
@@ -69,7 +69,7 @@ public class AFKManager {
      * @return Set of AFK player names
      */
     public Set<String> getAFKPlayers() {
-        long currentTime = System.currentTimeMillis();
+        final long currentTime = System.currentTimeMillis();
         return lastActivityTime.entrySet().stream()
             .filter(entry -> currentTime - entry.getValue() >= afkThresholdMillis)
             .map(Map.Entry::getKey)

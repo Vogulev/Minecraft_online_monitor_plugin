@@ -10,14 +10,14 @@ public class SnapshotTask implements Runnable {
     private final DatabaseManager database;
     private final Server server;
 
-    public SnapshotTask(DatabaseManager database, Server server) {
+    public SnapshotTask(final DatabaseManager database, final Server server) {
         this.database = database;
         this.server = server;
     }
 
     @Override
     public void run() {
-        int currentOnline = server.getOnlinePlayers().size();
+        final int currentOnline = server.getOnlinePlayers().size();
         database.recordOnlineSnapshot(currentOnline);
     }
 }

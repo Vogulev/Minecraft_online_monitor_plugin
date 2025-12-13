@@ -34,14 +34,14 @@ public class OnlineMonitorPlugin extends JavaPlugin {
     public void onEnable() {
         saveDefaultConfig();
 
-        String language = getConfig().getString("language", "en");
+        final String language = getConfig().getString("language", "en");
         initialize(language);
 
         database = new DatabaseManager(getDataFolder());
 
         try {
             initializeDatabase();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.severe("Failed to initialize database: " + e.getMessage());
             e.printStackTrace();
             getServer().getPluginManager().disablePlugin(this);
@@ -50,15 +50,15 @@ public class OnlineMonitorPlugin extends JavaPlugin {
 
         lastMaxOnline = database.getMaxOnline();
 
-        int afkThresholdMinutes = getConfig().getInt("afk-threshold-minutes", 5);
+        final int afkThresholdMinutes = getConfig().getInt("afk-threshold-minutes", 5);
         afkManager = new AFKManager(afkThresholdMinutes);
         logger.info("AFK detection threshold set to " + afkThresholdMinutes + " minutes");
 
-        boolean scoreboardEnabled = getConfig().getBoolean("scoreboard.enabled", true);
+        final boolean scoreboardEnabled = getConfig().getBoolean("scoreboard.enabled", true);
         scoreboardServerStatisticsManager = new ScoreboardServerStatisticsManager(database, scoreboardEnabled);
         logger.info("Scoreboard UI enabled = " + scoreboardEnabled);
 
-        PlayerEventListener playerListener = new PlayerEventListener(
+        final PlayerEventListener playerListener = new PlayerEventListener(
                 database,
                 discordBot,
                 getServer(),
@@ -69,11 +69,11 @@ public class OnlineMonitorPlugin extends JavaPlugin {
         playerListener.setScoreboardManager(scoreboardServerStatisticsManager);
         getServer().getPluginManager().registerEvents(playerListener, this);
 
-        PlayerStatisticsListener statsListener = new PlayerStatisticsListener(database, afkManager);
+        final PlayerStatisticsListener statsListener = new PlayerStatisticsListener(database, afkManager);
         getServer().getPluginManager().registerEvents(statsListener, this);
         logger.info("Extended statistics tracking enabled");
 
-        StatsCommandExecutor statsCommand = new StatsCommandExecutor(database, getServer(), playerJoinTimes,
+        final StatsCommandExecutor statsCommand = new StatsCommandExecutor(database, getServer(), playerJoinTimes,
                 scoreboardServerStatisticsManager);
         getCommand("online").setExecutor(statsCommand);
         getCommand("online").setTabCompleter(statsCommand);
@@ -92,8 +92,8 @@ public class OnlineMonitorPlugin extends JavaPlugin {
         if (discordBot != null && getConfig().getBoolean("discord.notifications.server-stop", true)) {
             discordBot.sendServerStopNotification();
         }
-        for (Map.Entry<String, Long> entry : playerJoinTimes.entrySet()) {
-            long sessionDuration = System.currentTimeMillis() - entry.getValue();
+        for (final Map.Entry<String, Long> entry : playerJoinTimes.entrySet()) {
+            final long sessionDuration = System.currentTimeMillis() - entry.getValue();
             database.recordPlayerQuit(entry.getKey(), sessionDuration);
         }
         playerJoinTimes.clear();
@@ -113,14 +113,14 @@ public class OnlineMonitorPlugin extends JavaPlugin {
     }
 
     private void initializeDatabase() throws Exception {
-        String timezoneOffset = getConfig().getString("timezone-offset", "+3");
+        final String timezoneOffset = getConfig().getString("timezone-offset", "+3");
         database.setTimezoneOffset(timezoneOffset);
 
         database.connect(getConfig());
     }
 
     private void scheduleTasks() {
-        long snapshotInterval = getConfig().getLong("snapshot-interval-minutes", 5) * 60 * 20; // In ticks
+        final long snapshotInterval = getConfig().getLong("snapshot-interval-minutes", 5) * 60 * 20; // In ticks
         getServer().getScheduler().runTaskTimer(
                 this,
                 new SnapshotTask(database, getServer()),
@@ -128,7 +128,7 @@ public class OnlineMonitorPlugin extends JavaPlugin {
                 snapshotInterval
         );
 
-        int daysToKeep = getConfig().getInt("snapshot-days-to-keep", 30);
+        final int daysToKeep = getConfig().getInt("snapshot-days-to-keep", 30);
         getServer().getScheduler().runTaskTimer(
                 this,
                 new CleanupTask(database, daysToKeep),
@@ -136,7 +136,7 @@ public class OnlineMonitorPlugin extends JavaPlugin {
                 24000L
         );
 
-        long scoreboardUpdateInterval = getConfig().getLong("scoreboard.update-interval-seconds", 1) * 20L;
+        final long scoreboardUpdateInterval = getConfig().getLong("scoreboard.update-interval-seconds", 1) * 20L;
         getServer().getScheduler().runTaskTimer(
                 this,
                 new UpdateScoreboardTask(scoreboardServerStatisticsManager),
@@ -149,7 +149,7 @@ public class OnlineMonitorPlugin extends JavaPlugin {
     }
 
     private void initializeDiscord() {
-        boolean discordEnabled = getConfig().getBoolean("discord.enabled", false);
+        final boolean discordEnabled = getConfig().getBoolean("discord.enabled", false);
         logger.info("Discord integration enabled=" + discordEnabled);
 
         if (!discordEnabled) {
@@ -157,8 +157,8 @@ public class OnlineMonitorPlugin extends JavaPlugin {
             return;
         }
 
-        String botToken = getConfig().getString("discord.bot-token");
-        String channelId = getConfig().getString("discord.channel-id");
+        final String botToken = getConfig().getString("discord.bot-token");
+        final String channelId = getConfig().getString("discord.channel-id");
 
         logger.info("Discord bot-token length: " + (botToken != null ? botToken.length() : "null"));
         logger.info("Discord channel-id: " + (channelId != null ? channelId : "null"));
@@ -186,7 +186,7 @@ public class OnlineMonitorPlugin extends JavaPlugin {
     }
 
     private void initializeWebServer() {
-        boolean webEnabled = getConfig().getBoolean("web-panel.enabled", false);
+        final boolean webEnabled = getConfig().getBoolean("web-panel.enabled", false);
         logger.info("Web panel enabled = " + webEnabled);
 
         if (!webEnabled) {
@@ -194,19 +194,19 @@ public class OnlineMonitorPlugin extends JavaPlugin {
             return;
         }
 
-        int port = getConfig().getInt("web-panel.port", 8080);
+        final int port = getConfig().getInt("web-panel.port", 8080);
 
         try {
             webServer = new WebServer(this, database, port);
             webServer.start();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.severe("Failed to start web panel: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
     private void checkNewRecord() {
-        int currentMaxOnline = database.getMaxOnline();
+        final int currentMaxOnline = database.getMaxOnline();
         if (currentMaxOnline > lastMaxOnline) {
             lastMaxOnline = currentMaxOnline;
 
