@@ -21,24 +21,24 @@ public class AnalyticsRepository {
 
     private final ConnectionManager connectionManager;
 
-    public AnalyticsRepository(ConnectionManager connectionManager) {
+    public AnalyticsRepository(final ConnectionManager connectionManager) {
         this.connectionManager = connectionManager;
     }
 
-    public void recordOnlineSnapshot(int onlineCount) {
-        String sql = "INSERT INTO online_snapshots (online_count, timestamp) VALUES (?, " + connectionManager.getCurrentTimestamp() + ")";
+    public void recordOnlineSnapshot(final int onlineCount) {
+        final String sql = "INSERT INTO online_snapshots (online_count, timestamp) VALUES (?, " + connectionManager.getCurrentTimestamp() + ")";
         try (Connection conn = connectionManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, onlineCount);
             pstmt.executeUpdate();
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             logger.severe("Error recording online snapshot: " + e.getMessage());
         }
     }
 
-    public Map<Integer, Double> getHourlyAverages(int days) {
-        Map<Integer, Double> hourlyAvg = new LinkedHashMap<>();
-        String sql = """
+    public Map<Integer, Double> getHourlyAverages(final int days) {
+        final Map<Integer, Double> hourlyAvg = new LinkedHashMap<>();
+        final String sql = """
             SELECT strftime('%H', timestamp) as hour, AVG(online_count) as avg_online
             FROM online_snapshots
             WHERE timestamp >= datetime('now', '-' || ? || ' days')
@@ -49,23 +49,23 @@ public class AnalyticsRepository {
         try (Connection conn = connectionManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, days);
-            ResultSet rs = pstmt.executeQuery();
+            final ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
-                int hour = Integer.parseInt(rs.getString("hour"));
-                double avg = rs.getDouble(AVG_ONLINE);
+                final int hour = Integer.parseInt(rs.getString("hour"));
+                final double avg = rs.getDouble(AVG_ONLINE);
                 hourlyAvg.put(hour, avg);
             }
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             logger.severe("Error getting hourly averages: " + e.getMessage());
         }
 
         return hourlyAvg;
     }
 
-    public Map<String, Double> getDailyAverages(int days) {
-        Map<String, Double> dailyAvg = new LinkedHashMap<>();
-        String sql = """
+    public Map<String, Double> getDailyAverages(final int days) {
+        final Map<String, Double> dailyAvg = new LinkedHashMap<>();
+        final String sql = """
             SELECT date(timestamp) as day, AVG(online_count) as avg_online
             FROM online_snapshots
             WHERE timestamp >= datetime('now', '-' || ? || ' days')
@@ -76,23 +76,23 @@ public class AnalyticsRepository {
         try (Connection conn = connectionManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, days);
-            ResultSet rs = pstmt.executeQuery();
+            final ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
-                String day = rs.getString("day");
-                double avg = rs.getDouble(AVG_ONLINE);
+                final String day = rs.getString("day");
+                final double avg = rs.getDouble(AVG_ONLINE);
                 dailyAvg.put(day, avg);
             }
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             logger.severe("Error getting daily averages: " + e.getMessage());
         }
 
         return dailyAvg;
     }
 
-    public Map<Integer, Double> getWeekdayAverages(int weeks) {
-        Map<Integer, Double> weekdayAvg = new LinkedHashMap<>();
-        String sql = """
+    public Map<Integer, Double> getWeekdayAverages(final int weeks) {
+        final Map<Integer, Double> weekdayAvg = new LinkedHashMap<>();
+        final String sql = """
             SELECT
                 CAST(strftime('%w', timestamp) AS INTEGER) as weekday_num,
                 AVG(online_count) as avg_online
@@ -105,23 +105,23 @@ public class AnalyticsRepository {
         try (Connection conn = connectionManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, weeks);
-            ResultSet rs = pstmt.executeQuery();
+            final ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
-                int weekdayNum = rs.getInt("weekday_num");
-                double avg = rs.getDouble(AVG_ONLINE);
+                final int weekdayNum = rs.getInt("weekday_num");
+                final double avg = rs.getDouble(AVG_ONLINE);
                 weekdayAvg.put(weekdayNum, avg);
             }
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             logger.severe("Error getting weekday averages: " + e.getMessage());
         }
 
         return weekdayAvg;
     }
 
-    public Map<String, Integer> getPeakHours(int days) {
-        Map<String, Integer> peakHours = new LinkedHashMap<>();
-        String sql = """
+    public Map<String, Integer> getPeakHours(final int days) {
+        final Map<String, Integer> peakHours = new LinkedHashMap<>();
+        final String sql = """
             SELECT
                 strftime('%H', timestamp) as hour,
                 MAX(online_count) as peak_online
@@ -135,30 +135,30 @@ public class AnalyticsRepository {
         try (Connection conn = connectionManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, days);
-            ResultSet rs = pstmt.executeQuery();
+            final ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
-                String hour = rs.getString("hour") + ":00";
-                int peak = rs.getInt("peak_online");
+                final String hour = rs.getString("hour") + ":00";
+                final int peak = rs.getInt("peak_online");
                 peakHours.put(hour, peak);
             }
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             logger.severe("Error getting peak hours: " + e.getMessage());
         }
 
         return peakHours;
     }
 
-    public void cleanOldSnapshots(int daysToKeep) {
-        String sql = "DELETE FROM online_snapshots WHERE timestamp < datetime('now', '-' || ? || ' days')";
+    public void cleanOldSnapshots(final int daysToKeep) {
+        final String sql = "DELETE FROM online_snapshots WHERE timestamp < datetime('now', '-' || ? || ' days')";
         try (Connection conn = connectionManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, daysToKeep);
-            int deleted = pstmt.executeUpdate();
+            final int deleted = pstmt.executeUpdate();
             if (deleted > 0) {
                 logger.info("Cleaned " + deleted + " old snapshots from database");
             }
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             logger.severe("Error cleaning old snapshots: " + e.getMessage());
         }
     }

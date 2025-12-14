@@ -8,7 +8,7 @@ import com.vogulev.online_monitor.ui.ScoreboardServerStatisticsManager;
 public class UpdateScoreboardTask implements Runnable {
     private final ScoreboardServerStatisticsManager scoreboardServerStatisticsManager;
 
-    public UpdateScoreboardTask(ScoreboardServerStatisticsManager scoreboardServerStatisticsManager) {
+    public UpdateScoreboardTask(final ScoreboardServerStatisticsManager scoreboardServerStatisticsManager) {
         this.scoreboardServerStatisticsManager = scoreboardServerStatisticsManager;
     }
 

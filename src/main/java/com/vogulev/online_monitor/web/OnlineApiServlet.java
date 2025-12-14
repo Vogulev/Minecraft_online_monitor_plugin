@@ -25,24 +25,24 @@ public class OnlineApiServlet extends HttpServlet {
     private final OnlineMonitorPlugin plugin;
     private final Gson gson;
 
-    public OnlineApiServlet(DatabaseManager database, OnlineMonitorPlugin plugin) {
+    public OnlineApiServlet(final DatabaseManager database, final OnlineMonitorPlugin plugin) {
         this.database = database;
         this.plugin = plugin;
         this.gson = new GsonBuilder().setPrettyPrinting().create();
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws IOException {
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
         resp.setHeader("Access-Control-Allow-Origin", "*");
 
         try {
-            Map<String, Object> data = getServerData();
+            final Map<String, Object> data = getServerData();
             resp.getWriter().write(gson.toJson(data));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            Map<String, String> error = new HashMap<>();
+            final Map<String, String> error = new HashMap<>();
             error.put("error", e.getMessage());
             resp.getWriter().write(gson.toJson(error));
         }
@@ -51,15 +51,15 @@ public class OnlineApiServlet extends HttpServlet {
 
     private Map<String, Object> getServerData()
     {
-        Map<String, Object> data = new HashMap<>();
+        final Map<String, Object> data = new HashMap<>();
 
-        int currentOnline = plugin.getServer().getOnlinePlayers().size();
+        final int currentOnline = plugin.getServer().getOnlinePlayers().size();
         data.put("current", currentOnline);
         data.put("max", plugin.getServer().getMaxPlayers());
         data.put("record", database.getMaxOnline());
 
-        List<String> players = new ArrayList<>();
-        for (Player player : plugin.getServer().getOnlinePlayers()) {
+        final List<String> players = new ArrayList<>();
+        for (final Player player : plugin.getServer().getOnlinePlayers()) {
             players.add(player.getName());
         }
         data.put("players", players);

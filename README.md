@@ -360,6 +360,42 @@ The plugin displays a real-time statistics panel on the right side of the screen
 
 ---
 
+## Permissions
+
+The plugin has a permissions system to control access to commands.
+
+### Available Permissions:
+
+- **`onlinemonitor.*`** - All plugin permissions (recommended for admins)
+- **`onlinemonitor.basic`** - Basic commands (default: everyone)
+  - `/online` - basic statistics
+  - `/online ui` - toggle UI panel
+- **`onlinemonitor.stats`** - Extended statistics (default: everyone)
+  - `/online stats`, `/online top`, `/online player`
+  - `/online hourly`, `/online daily`, `/online weekday`, `/online peak`
+- **`onlinemonitor.admin`** - Admin permissions (default: operators only)
+  - Reserved for future admin commands
+
+### Setup Instructions:
+
+For detailed permission setup with LuckPerms, PermissionsEx, or Bukkit permissions.yml
+
+### Quick Examples (LuckPerms):
+
+```bash
+# Grant all permissions to admin
+/lp user Admin permission set onlinemonitor.* true
+
+# Remove extended statistics from player
+/lp user Player permission set onlinemonitor.stats false
+
+# Create VIP group with full access
+/lp creategroup vip
+/lp group vip permission set onlinemonitor.stats true
+```
+
+---
+
 ## Discord Slash Commands
 
 After successful bot setup, the following commands will be available in Discord:
