@@ -42,6 +42,12 @@ public class PlayersApiServlet extends HttpServlet {
                 playerStats.put("name", playerName);
                 playerStats.put("joinCount", database.getPlayerJoinCount(playerName));
                 playerStats.put("totalPlaytime", database.getPlayerTotalPlaytime(playerName));
+                playerStats.put("deaths", database.getPlayerDeaths(playerName));
+                playerStats.put("mobKills", database.getPlayerMobKills(playerName));
+                playerStats.put("playerKills", database.getPlayerPlayerKills(playerName));
+                playerStats.put("blocksBroken", database.getPlayerBlocksBroken(playerName));
+                playerStats.put("blocksPlaced", database.getPlayerBlocksPlaced(playerName));
+                playerStats.put("messagesSent", database.getPlayerMessagesSent(playerName));
                 resp.getWriter().write(gson.toJson(playerStats));
             } else {
                 final String limitParam = req.getParameter("limit");

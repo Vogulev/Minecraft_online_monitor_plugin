@@ -515,6 +515,36 @@
                         <div class="value">${hoursPlayed}</div>
                         <div class="label">${hoursPlayed} h ${minutesPlayed} min</div>
                     </div>
+                    <div class="detail-card">
+                        <h3>☠️ Deaths</h3>
+                        <div class="value">${data.deaths || 0}</div>
+                        <div class="label">times</div>
+                    </div>
+                    <div class="detail-card">
+                        <h3>⚔️ Mob Kills</h3>
+                        <div class="value">${data.mobKills || 0}</div>
+                        <div class="label">mobs</div>
+                    </div>
+                    <div class="detail-card">
+                        <h3>🗡️ PvP Kills</h3>
+                        <div class="value">${data.playerKills || 0}</div>
+                        <div class="label">players</div>
+                    </div>
+                    <div class="detail-card">
+                        <h3>⛏️ Blocks Broken</h3>
+                        <div class="value">${data.blocksBroken || 0}</div>
+                        <div class="label">blocks</div>
+                    </div>
+                    <div class="detail-card">
+                        <h3>🧱 Blocks Placed</h3>
+                        <div class="value">${data.blocksPlaced || 0}</div>
+                        <div class="label">blocks</div>
+                    </div>
+                    <div class="detail-card">
+                        <h3>💬 Messages Sent</h3>
+                        <div class="value">${data.messagesSent || 0}</div>
+                        <div class="label">messages</div>
+                    </div>
                 `;
 
                 document.getElementById('playerModal').style.display = 'block';

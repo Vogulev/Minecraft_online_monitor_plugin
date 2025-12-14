@@ -141,6 +141,7 @@ public class ScoreboardServerStatisticsManager
         playerScoreboardEnabled.put(playerId, false);
 
         playerScoreboards.remove(playerId);
+        player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
     }
 
 

@@ -3,6 +3,17 @@
 ## [0.5.0] - 2025-12-07
 
 ### Added
+- **Permissions System** - Role-based access control for commands
+  - New `Permission` enum with type-safe permission nodes
+  - Three permission levels: BASIC, STATS, ADMIN
+  - `onlinemonitor.basic` - basic commands (/online, /online ui) - default: all players
+  - `onlinemonitor.stats` - extended statistics commands - default: all players
+  - `onlinemonitor.admin` - admin commands (reserved for future) - default: operators only
+  - `onlinemonitor.*` - wildcard permission for all features
+  - Compatible with LuckPerms, PermissionsEx, and native Bukkit permissions
+  - Automatic permission checking for all commands
+  - Updated README with detailed permission setup guide and examples
+
 - **Extended Player Statistics** - Comprehensive tracking of player activities
   - ☠️ Deaths tracking - total player deaths count
   - ⚔️ Mob kills tracking - total killed mobs count
@@ -46,6 +57,16 @@
 - Updated `PlayerStatsRepository` with new methods for extended statistics
 - Updated `DatabaseManager` with delegating methods for new features
 - Improved localization files with new message keys (EN/RU)
+- **Enhanced Web Dashboard Player Modal** - Extended statistics display
+  - Added extended statistics to player modal window (click on player name)
+  - New visual cards with emojis: ☠️ Deaths, ⚔️ Mob Kills, 🗡️ PvP Kills, ⛏️ Blocks Broken, 🧱 Blocks Placed, 💬 Messages Sent
+  - Updated API endpoint `/api/players?name=<name>` to return all extended statistics
+  - Improved modal grid layout for better statistics visualization
+
+### Fixed
+- **UI Scoreboard Toggle Bug** - Fixed `/online ui` command not removing scoreboard panel
+  - Added proper scoreboard cleanup when disabling UI
+  - Scoreboard now correctly hides/shows when toggling with `/online ui` command
 
 ### Configuration
 - Added `afk-threshold-minutes` parameter - AFK detection threshold in minutes (default: 5)
@@ -53,6 +74,21 @@
   - Configurable based on server preferences
 
 ### Technical Improvements
+- **Command System Refactoring** - Complete architectural redesign
+  - New `OnlineMonitorCommand` interface for consistent command structure
+  - New `SubCommand` enum for type-safe subcommand handling
+  - Each command extracted into separate class for better maintainability
+  - New command classes: `DailyStatsCommand`, `HelpCommand`, `HourlyStatsCommand`, `PeakStatsCommand`, `PlayerStatsCommand`, `SendDetailedStatsCommand`, `ToggleUICommand`, `TopStatsCommand`, `WeekdayCommand`
+  - Simplified `StatsCommandExecutor` with delegation pattern
+  - Removed deprecated `StatsFormatter` in favor of inline formatting
+- **Centralized Localization** - New `LocalizationKey` enum
+  - Type-safe access to all localization keys
+  - Prevents typos and missing translations
+  - Better IDE autocomplete support
+- **New Utility Classes** - Enhanced code reusability
+  - `MessageUtils` - helper methods for sending colored messages
+  - `NumericUtils` - numeric formatting and calculations
+  - `StatisticsBarCreater` - visual progress bar generation for statistics
 - Asynchronous database operations for all new statistics
 - Optimized event handling with priority monitoring
 - Clean separation of concerns with new manager classes
